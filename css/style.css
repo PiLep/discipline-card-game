@@ -353,8 +353,12 @@ body {
 .hand-card.disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    transform: none !important;
     filter: grayscale(0.5);
+}
+
+.hand-card.disabled:hover {
+    transform: translateY(250px);
+    z-index: 1;
 }
 
 /* Full card image */
