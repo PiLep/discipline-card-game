@@ -566,6 +566,58 @@ body {
     position: relative;
 }
 
+/* Bottom Sheet pour mobile */
+@media (max-width: 768px) {
+    .settings-panel {
+        align-items: flex-end;
+        padding: 0;
+        background: rgba(10, 5, 2, 0);
+        pointer-events: none;
+    }
+
+    .settings-panel.active {
+        background: rgba(10, 5, 2, 0.7);
+        pointer-events: auto;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .settings-content {
+        max-width: 100%;
+        border-radius: 20px 20px 0 0;
+        border-bottom: none;
+        padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+    }
+
+    .settings-panel.active .settings-content {
+        transform: translateY(0);
+    }
+
+    /* Drag handle indicator */
+    .settings-content::after {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background: var(--gold-dark);
+        border-radius: 2px;
+        opacity: 0.5;
+    }
+
+    .settings-content h2 {
+        margin-top: 10px;
+    }
+}
+
+@keyframes fadeIn {
+    from { background: rgba(10, 5, 2, 0); }
+    to { background: rgba(10, 5, 2, 0.7); }
+}
+
 .settings-content::before {
     content: '';
     position: absolute;
