@@ -202,9 +202,8 @@ class App {
             }
 
             cardEl.innerHTML = `
-                <span class="card-emoji">${card.emoji}</span>
-                <span class="card-name">${card.name}</span>
                 ${card.type !== 'fasting' ? `<span class="card-count">${card.count}</span>` : ''}
+                <img class="card-image" src="${card.image}" alt="${card.name}" draggable="false">
             `;
 
             if (!isDisabled) {
@@ -309,8 +308,7 @@ class App {
                 const cardInfo = meal.type === 'fasting' ? FASTING_OPTION : CARD_TYPES[meal.type];
                 slot.innerHTML = `
                     <div class="played-card-mini ${meal.type}">
-                        <span class="card-emoji">${cardInfo.emoji}</span>
-                        <span class="card-name">${cardInfo.name}</span>
+                        <img class="card-image" src="${cardInfo.image}" alt="${cardInfo.name}" draggable="false">
                         <button class="remove-btn">&times;</button>
                     </div>
                 `;

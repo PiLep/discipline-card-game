@@ -46,7 +46,7 @@ body {
 }
 
 .app {
-    max-width: 500px;
+    max-width: 100%;
     margin: 0 auto;
     min-height: 100vh;
     display: flex;
@@ -68,27 +68,29 @@ body {
 /* Calendar Section */
 .calendar-section {
     background: var(--bg-card);
-    padding: 12px 15px;
-    margin: 0 10px 10px;
+    padding: 20px 30px;
+    margin: 0 auto 20px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
+    max-width: 700px;
+    width: calc(100% - 40px);
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .calendar-header .nav-btn {
     background: var(--bg-light);
     border: none;
     color: var(--text);
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -98,15 +100,15 @@ body {
 }
 
 .week-label {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: var(--text);
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
+    gap: 10px;
 }
 
 .calendar-day {
@@ -116,11 +118,12 @@ body {
     align-items: center;
     justify-content: center;
     background: var(--bg-light);
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    border: 2px solid transparent;
-    padding: 4px;
+    border: 3px solid transparent;
+    padding: 8px;
+    min-height: 70px;
 }
 
 .calendar-day:hover {
@@ -142,25 +145,26 @@ body {
 }
 
 .calendar-day .day-name {
-    font-size: 0.55rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     text-transform: uppercase;
+    font-weight: 500;
 }
 
 .calendar-day .day-number {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
 .calendar-day .day-status {
     display: flex;
-    gap: 2px;
-    margin-top: 2px;
+    gap: 3px;
+    margin-top: 4px;
 }
 
 .calendar-day .status-dot {
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
 }
 
@@ -173,18 +177,20 @@ body {
 /* Game Board */
 .game-board {
     flex: 1;
-    padding: 10px 15px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .selected-date-title {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
+    text-align: center;
 }
 
 .selected-date-title .today-badge {
@@ -198,26 +204,29 @@ body {
 /* Meal Slots */
 .meal-slots {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex: 1;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .meal-drop-zone {
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    padding: 12px 15px;
+    padding: 15px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     transition: all 0.2s;
-    border: 2px dashed transparent;
-    flex: 1;
+    border: 3px dashed transparent;
     box-shadow: var(--shadow);
+    min-width: 300px;
+    min-height: 450px;
 }
 
 .meal-drop-zone.main-meal {
-    flex: 2;
+    /* Same size for all meals now */
 }
 
 .meal-drop-zone.drag-over {
@@ -227,15 +236,16 @@ body {
 }
 
 .meal-label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    min-width: 100px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
 }
 
 .meal-card-slot {
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .meal-card-slot .empty-slot {
@@ -244,59 +254,39 @@ body {
     opacity: 0.5;
 }
 
-/* Played card in slot */
-.played-card-mini {
-    width: 70px;
-    height: 95px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255,255,255,0.1);
-    color: white;
-}
-
-.played-card-mini:hover {
-    transform: scale(1.05);
-}
-
-.played-card-mini.discipline { background: linear-gradient(135deg, var(--discipline) 0%, #388E3C 100%); }
-.played-card-mini.flex { background: linear-gradient(135deg, var(--flex) 0%, #1976D2 100%); }
-.played-card-mini.joker { background: linear-gradient(135deg, var(--joker) 0%, #F57C00 100%); }
-.played-card-mini.fasting { background: linear-gradient(135deg, var(--fasting) 0%, #7B1FA2 100%); }
-
-.played-card-mini .card-emoji {
-    font-size: 1.8rem;
-    margin-bottom: 4px;
-}
-
-.played-card-mini .card-name {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-align: center;
-}
-
+/* Played card in slot - remove button (centered, visible on hover) */
 .played-card-mini .remove-btn {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--bg-card);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
     border: none;
-    color: var(--text);
-    width: 22px;
-    height: 22px;
+    color: white;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow);
+    opacity: 0;
+    transition: all 0.2s;
+    z-index: 5;
+}
+
+.played-card-mini:hover .remove-btn {
+    opacity: 1;
+}
+
+.played-card-mini .remove-btn:hover {
+    background: rgba(198, 40, 40, 0.9);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.played-card-mini {
+    cursor: pointer;
 }
 
 /* Hand Section */
@@ -305,104 +295,108 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(245, 245, 245, 0.98) 0%, rgba(245, 245, 245, 0.9) 80%, transparent 100%);
-    padding: 10px 10px 20px;
+    background: linear-gradient(to top, var(--bg) 0%, var(--bg) 60%, transparent 100%);
+    padding: 0 20px 10px;
     z-index: 50;
-}
-
-.dark-mode .hand-section {
-    background: linear-gradient(to top, rgba(26, 26, 46, 0.98) 0%, rgba(26, 26, 46, 0.9) 80%, transparent 100%);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: visible;
 }
 
 .hand-info {
     text-align: center;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .card-hand {
     display: flex;
     justify-content: center;
-    gap: 8px;
     padding: 0 10px;
-    flex-wrap: wrap;
+    overflow: visible;
+    padding-top: 250px;
+    margin-top: -250px;
 }
 
-/* Draggable Cards */
-.hand-card {
-    width: 70px;
-    height: 95px;
-    border-radius: 10px;
+/* Hearthstone-style Cards - Full card image (transparent PNG) */
+.hand-card,
+.played-card-mini {
+    width: 280px;
+    height: 400px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: grab;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255,255,255,0.1);
+    background: transparent;
+    border: none;
+}
+
+.hand-card {
+    cursor: grab;
+    margin: 0 -30px;
+    transform: translateY(250px);
 }
 
 .hand-card:hover {
-    transform: translateY(-10px) scale(1.05);
-    z-index: 10;
+    transform: translateY(50px) scale(1.05);
+    z-index: 100;
 }
 
 .hand-card:active {
     cursor: grabbing;
 }
 
-.hand-card.discipline { background: linear-gradient(135deg, var(--discipline) 0%, #388E3C 100%); }
-.hand-card.flex { background: linear-gradient(135deg, var(--flex) 0%, #1976D2 100%); }
-.hand-card.joker { background: linear-gradient(135deg, var(--joker) 0%, #F57C00 100%); }
-.hand-card.fasting { background: linear-gradient(135deg, var(--fasting) 0%, #7B1FA2 100%); }
-
 .hand-card.disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    transform: none !important;
+    filter: grayscale(0.5);
 }
 
-.hand-card .card-emoji {
-    font-size: 1.8rem;
-    margin-bottom: 4px;
+.hand-card.disabled:hover {
+    transform: translateY(250px);
+    z-index: 1;
 }
 
-.hand-card .card-name {
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-align: center;
+/* Full card image */
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
-.hand-card .card-count {
+/* Counter badge - positioned on top of card */
+.card-count {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--bg-card);
-    color: var(--text);
-    width: 24px;
-    height: 24px;
+    top: 10px;
+    left: 10px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border: 2px solid currentColor;
-    box-shadow: var(--shadow);
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 2px 3px rgba(0,0,0,0.7);
+    background: radial-gradient(ellipse at 30% 30%, #5c9ce6 0%, #1565C0 60%, #0D47A1 100%);
+    border: 4px solid #c9a227;
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.5),
+        inset 0 -3px 6px rgba(0,0,0,0.3),
+        inset 0 3px 6px rgba(255,255,255,0.3);
+    z-index: 5;
 }
-
-.hand-card.discipline .card-count { border-color: var(--discipline); }
-.hand-card.flex .card-count { border-color: var(--flex); }
-.hand-card.joker .card-count { border-color: var(--joker); }
 
 /* Dragging state */
 .hand-card.dragging {
-    opacity: 0.8;
-    transform: scale(1.1) rotate(5deg);
-    z-index: 100;
+    opacity: 0.9;
+    transform: translateY(0) scale(1.1) rotate(3deg);
+    z-index: 200;
 }
 
 /* Settings */
@@ -611,19 +605,66 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 380px) {
-    .hand-card {
-        width: 60px;
-        height: 85px;
+@media (max-width: 560px) {
+    .hand-card,
+    .played-card-mini {
+        width: 130px;
+        height: 182px;
     }
 
-    .hand-card .card-emoji {
-        font-size: 1.5rem;
+    .card-art {
+        width: 96px;
+        height: 75px;
+        margin-top: 16px;
+    }
+
+    .card-banner {
+        margin-top: 12px;
+        padding: 8px 10px;
+    }
+
+    .card-name {
+        font-size: 0.85rem;
+    }
+
+    .card-count {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
     }
 
     .meal-label {
         min-width: 80px;
         font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .hand-card,
+    .played-card-mini {
+        width: 110px;
+        height: 154px;
+    }
+
+    .card-art {
+        width: 80px;
+        height: 62px;
+        margin-top: 14px;
+    }
+
+    .card-banner {
+        margin-top: 10px;
+        padding: 6px 8px;
+    }
+
+    .card-name {
+        font-size: 0.75rem;
+    }
+
+    .card-count {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
     }
 }
 

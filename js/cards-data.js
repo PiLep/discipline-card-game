@@ -13,21 +13,21 @@ const CARD_TYPES = {
     discipline: {
         id: 'discipline',
         name: 'Discipline',
-        emoji: '💪',
+        image: 'images/cards/discipline.png',
         color: '#4CAF50',
         description: 'Légumes & Protéines uniquement'
     },
     flex: {
         id: 'flex',
         name: 'Flex',
-        emoji: '⚖️',
+        image: 'images/cards/flex.png',
         color: '#2196F3',
         description: 'Légumes, Protéines & Féculents'
     },
     joker: {
         id: 'joker',
         name: 'Joker',
-        emoji: '🃏',
+        image: 'images/cards/joker.png',
         color: '#FF9800',
         description: 'Tout est permis !'
     }
@@ -37,7 +37,7 @@ const CARD_TYPES = {
 const FASTING_OPTION = {
     id: 'fasting',
     name: 'Jeûner',
-    emoji: '🧘',
+    image: 'images/cards/fasting.png',
     color: '#9C27B0',
     description: 'Sauter ce repas'
 };
