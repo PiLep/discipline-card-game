@@ -302,6 +302,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    overflow: visible;
 }
 
 .hand-info {
@@ -314,10 +315,8 @@ body {
 .card-hand {
     display: flex;
     justify-content: center;
-    gap: -40px;
     padding: 0 10px;
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
     padding-top: 250px;
     margin-top: -250px;
 }
