@@ -991,6 +991,45 @@ body {
     margin: 4px 0 0 0;
 }
 
+.card-examples {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 6px;
+    opacity: 0.8;
+}
+
+.onboarding-privacy {
+    background: var(--bg-card);
+    border: 1px solid var(--gold-dark);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 15px 0;
+}
+
+/* Restart tutorial button */
+.restart-tuto-btn {
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 2px solid var(--gold-dark);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+}
+
+.restart-tuto-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: var(--bg-light);
+}
+
 /* Regime selection */
 .onboarding-regimes {
     display: flex;

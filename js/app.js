@@ -56,6 +56,9 @@ class App {
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         darkModeToggle.addEventListener('change', () => this.toggleDarkMode(darkModeToggle.checked));
 
+        // Restart tutorial
+        document.getElementById('restart-tuto').addEventListener('click', () => this.restartTutorial());
+
         // Setup drop zones
         this.setupDropZones();
     }
@@ -633,6 +636,28 @@ class App {
         setTimeout(() => {
             onboarding.style.display = 'none';
         }, 300);
+    }
+
+    restartTutorial() {
+        // Close settings panel
+        document.getElementById('settings-panel').classList.remove('active');
+
+        // Reset onboarding state
+        this.selectedOnboardingRegime = null;
+
+        // Reset UI
+        document.querySelectorAll('.onboarding-regime').forEach(el => {
+            el.classList.remove('selected');
+        });
+        document.getElementById('onboarding-regime-btn').disabled = true;
+
+        // Go to step 1
+        this.goToOnboardingStep(1);
+
+        // Show onboarding
+        const onboarding = document.getElementById('onboarding');
+        onboarding.style.display = 'flex';
+        onboarding.classList.remove('hidden');
     }
 }
 
