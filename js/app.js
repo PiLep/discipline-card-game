@@ -57,7 +57,8 @@ class App {
     }
 
     initTheme() {
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        const savedTheme = localStorage.getItem('darkMode');
+        const isDarkMode = savedTheme === null ? true : savedTheme === 'true';
         document.getElementById('dark-mode-toggle').checked = isDarkMode;
         if (isDarkMode) {
             document.body.classList.add('dark-mode');
