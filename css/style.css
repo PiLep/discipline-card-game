@@ -57,6 +57,10 @@ body {
     color: var(--text);
     min-height: 100vh;
     user-select: none;
+    /* Safe Area support pour iPhone */
+    padding-top: env(safe-area-inset-top);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 .app {
@@ -380,9 +384,9 @@ body {
     left: 0;
     right: 0;
     background: linear-gradient(to top, var(--bg) 0%, var(--bg) 50%, transparent 100%);
-    padding: 0 20px 10px;
+    padding: 0 20px calc(10px + env(safe-area-inset-bottom));
     z-index: 50;
-    height: 200px;
+    height: calc(200px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -780,6 +784,42 @@ body {
     border-color: #c62828;
     color: #ff6b6b;
     background: linear-gradient(180deg, #3d1515 0%, #2a0f0f 100%);
+}
+
+/* Touch Feedback - Mobile */
+@media (hover: none) and (pointer: coarse) {
+    .hand-card:active:not(.disabled) {
+        transform: translateY(150px) scale(0.95);
+        transition: transform 0.1s ease-out;
+    }
+
+    .calendar-day:active {
+        transform: scale(0.95);
+        transition: transform 0.1s ease-out;
+    }
+
+    .nav-btn:active {
+        transform: scale(0.9);
+        background: var(--gold-dark);
+        transition: transform 0.1s ease-out;
+    }
+
+    .btn:active {
+        transform: scale(0.95);
+        filter: brightness(0.9);
+        transition: transform 0.1s ease-out;
+    }
+
+    .settings-toggle:active {
+        transform: scale(0.9);
+        transition: transform 0.1s ease-out;
+    }
+
+    .played-card-mini .remove-btn:active {
+        transform: translate(-50%, -50%) scale(0.9);
+        background: #c62828;
+        transition: transform 0.1s ease-out;
+    }
 }
 
 /* Responsive */
