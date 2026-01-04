@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Discipline Nutrition</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,32 +13,7 @@
             <h1>Discipline Nutrition</h1>
         </header>
 
-        <!-- Deck restant -->
-        <section class="deck-section">
-            <div class="deck-header">
-                <h2>Mon Deck</h2>
-                <span class="reset-info" id="reset-info"></span>
-            </div>
-            <div class="deck-cards">
-                <div class="deck-card discipline" id="deck-discipline">
-                    <span class="emoji">💪</span>
-                    <span class="count" id="count-discipline">0</span>
-                    <span class="label">Discipline</span>
-                </div>
-                <div class="deck-card flex" id="deck-flex">
-                    <span class="emoji">⚖️</span>
-                    <span class="count" id="count-flex">0</span>
-                    <span class="label">Flex</span>
-                </div>
-                <div class="deck-card joker" id="deck-joker">
-                    <span class="emoji">🃏</span>
-                    <span class="count" id="count-joker">0</span>
-                    <span class="label">Joker</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- Calendrier -->
+        <!-- Calendrier compact -->
         <section class="calendar-section">
             <div class="calendar-header">
                 <button class="nav-btn" id="prev-week">&larr;</button>
@@ -48,114 +23,60 @@
             <div class="calendar-grid" id="calendar-grid"></div>
         </section>
 
-        <!-- Repas du jour sélectionné -->
-        <section class="meals-section">
+        <!-- Zone de jeu principale -->
+        <section class="game-board">
+            <!-- Date sélectionnée -->
             <h2 class="selected-date-title" id="selected-date-title">Aujourd'hui</h2>
-            <div class="meals-grid">
-                <div class="meal-slot" data-meal="breakfast">
-                    <div class="meal-header">
-                        <span class="meal-emoji">🌅</span>
-                        <span class="meal-name">Petit-déjeuner</span>
-                    </div>
-                    <div class="meal-card" id="meal-breakfast">
-                        <button class="play-btn">Jouer une carte</button>
-                    </div>
-                </div>
 
-                <div class="meal-slot" data-meal="lunch">
-                    <div class="meal-header">
-                        <span class="meal-emoji">☀️</span>
-                        <span class="meal-name">Déjeuner</span>
-                    </div>
-                    <div class="meal-card" id="meal-lunch">
-                        <button class="play-btn">Jouer une carte</button>
-                    </div>
+            <!-- Zones de drop pour les repas -->
+            <div class="meal-slots">
+                <div class="meal-drop-zone" data-meal="breakfast" id="drop-breakfast">
+                    <div class="meal-label">🌅 Petit-déj</div>
+                    <div class="meal-card-slot" id="slot-breakfast"></div>
                 </div>
-
-                <div class="meal-slot" data-meal="dinner">
-                    <div class="meal-header">
-                        <span class="meal-emoji">🌙</span>
-                        <span class="meal-name">Dîner</span>
-                    </div>
-                    <div class="meal-card" id="meal-dinner">
-                        <button class="play-btn">Jouer une carte</button>
-                    </div>
+                <div class="meal-drop-zone" data-meal="lunch" id="drop-lunch">
+                    <div class="meal-label">☀️ Déjeuner</div>
+                    <div class="meal-card-slot" id="slot-lunch"></div>
                 </div>
-
-                <div class="meal-slot" data-meal="snack">
-                    <div class="meal-header">
-                        <span class="meal-emoji">🍎</span>
-                        <span class="meal-name">Collation</span>
-                    </div>
-                    <div class="meal-card" id="meal-snack">
-                        <button class="play-btn">Jouer une carte</button>
-                    </div>
+                <div class="meal-drop-zone" data-meal="dinner" id="drop-dinner">
+                    <div class="meal-label">🌙 Dîner</div>
+                    <div class="meal-card-slot" id="slot-dinner"></div>
+                </div>
+                <div class="meal-drop-zone" data-meal="snack" id="drop-snack">
+                    <div class="meal-label">🍎 Collation</div>
+                    <div class="meal-card-slot" id="slot-snack"></div>
                 </div>
             </div>
         </section>
 
-        <!-- Paramètres -->
-        <section class="settings-section">
-            <h2>Régime</h2>
-            <div class="regime-selector" id="regime-selector"></div>
-
-            <div class="custom-deck" id="custom-deck" style="display: none;">
-                <h3>Deck personnalisé</h3>
-                <div class="custom-inputs">
-                    <label>
-                        💪 Discipline
-                        <input type="number" id="custom-discipline" min="0" max="28" value="14">
-                    </label>
-                    <label>
-                        ⚖️ Flex
-                        <input type="number" id="custom-flex" min="0" max="28" value="10">
-                    </label>
-                    <label>
-                        🃏 Joker
-                        <input type="number" id="custom-joker" min="0" max="28" value="4">
-                    </label>
-                </div>
-                <button class="save-custom-btn" id="save-custom">Appliquer</button>
+        <!-- Main de cartes (style Hearthstone) -->
+        <section class="hand-section">
+            <div class="hand-info">
+                <span id="deck-info"></span>
+            </div>
+            <div class="card-hand" id="card-hand">
+                <!-- Les cartes seront générées ici -->
             </div>
         </section>
 
-        <!-- Modal choix de carte -->
-        <div class="modal" id="card-modal">
-            <div class="modal-content">
-                <h2>Choisir une carte</h2>
-                <p class="modal-meal-name" id="modal-meal-name"></p>
+        <!-- Bouton paramètres -->
+        <button class="settings-toggle" id="settings-toggle">⚙️</button>
 
-                <div class="card-choices">
-                    <button class="card-choice discipline" data-card="discipline">
-                        <span class="emoji">💪</span>
-                        <span class="name">Discipline</span>
-                        <span class="desc">Légumes & Protéines</span>
-                        <span class="remaining" id="modal-discipline-count"></span>
-                    </button>
-
-                    <button class="card-choice flex" data-card="flex">
-                        <span class="emoji">⚖️</span>
-                        <span class="name">Flex</span>
-                        <span class="desc">+ Féculents</span>
-                        <span class="remaining" id="modal-flex-count"></span>
-                    </button>
-
-                    <button class="card-choice joker" data-card="joker">
-                        <span class="emoji">🃏</span>
-                        <span class="name">Joker</span>
-                        <span class="desc">Tout est permis</span>
-                        <span class="remaining" id="modal-joker-count"></span>
-                    </button>
-
-                    <button class="card-choice fasting" data-card="fasting">
-                        <span class="emoji">🧘</span>
-                        <span class="name">Jeûner</span>
-                        <span class="desc">Sauter ce repas</span>
-                        <span class="remaining">∞</span>
-                    </button>
+        <!-- Panel paramètres -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-content">
+                <h2>Régime</h2>
+                <div class="regime-selector" id="regime-selector"></div>
+                <div class="custom-deck" id="custom-deck" style="display: none;">
+                    <h3>Deck personnalisé</h3>
+                    <div class="custom-inputs">
+                        <label>💪 Discipline <input type="number" id="custom-discipline" min="0" max="28" value="14"></label>
+                        <label>⚖️ Flex <input type="number" id="custom-flex" min="0" max="28" value="10"></label>
+                        <label>🃏 Joker <input type="number" id="custom-joker" min="0" max="28" value="4"></label>
+                    </div>
+                    <button class="save-custom-btn" id="save-custom">Appliquer</button>
                 </div>
-
-                <button class="cancel-btn" id="cancel-modal">Annuler</button>
+                <button class="close-settings" id="close-settings">Fermer</button>
             </div>
         </div>
 
