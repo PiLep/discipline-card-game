@@ -314,12 +314,16 @@ class App {
                         touchGhost.style.top = (touch.clientY - cardEl.offsetHeight / 2) + 'px';
                     }
 
-                    // Highlight drop zone sous le doigt
-                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
-                    if (element && element.closest('.meal-drop-zone')) {
-                        element.closest('.meal-drop-zone').classList.add('drag-over');
-                    }
+                    // Highlight drop zone sous le doigt (par coordonnées, pas elementFromPoint)
+                    document.querySelectorAll('.meal-drop-zone').forEach(z => {
+                        const rect = z.getBoundingClientRect();
+                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                            z.classList.add('drag-over');
+                        } else {
+                            z.classList.remove('drag-over');
+                        }
+                    });
                 }, { passive: false });
 
                 cardEl.addEventListener('touchend', (e) => {
@@ -335,12 +339,20 @@ class App {
                     }
 
                     const touch = e.changedTouches[0];
-                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
 
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
+                    // Trouver la drop zone par coordonnées
+                    let targetZone = null;
+                    document.querySelectorAll('.meal-drop-zone').forEach(z => {
+                        const rect = z.getBoundingClientRect();
+                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                            targetZone = z;
+                        }
+                        z.classList.remove('drag-over');
+                    });
 
-                    if (element && element.closest('.meal-drop-zone')) {
-                        const mealType = element.closest('.meal-drop-zone').dataset.meal;
+                    if (targetZone) {
+                        const mealType = targetZone.dataset.meal;
                         this.playCard(mealType, this.draggedCard);
                     }
                     this.draggedCard = null;
