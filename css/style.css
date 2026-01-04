@@ -334,9 +334,33 @@ body {
 
 .hand-info {
     text-align: center;
-    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.cta-hint {
+    display: inline-block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--bg-card);
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    animation: pulse-hint 2s ease-in-out infinite;
+}
+
+@keyframes pulse-hint {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+.week-past-hint,
+.week-future-hint {
+    font-size: 0.9rem;
     color: var(--text-muted);
-    margin-bottom: 5px;
+    padding: 6px 14px;
+    background: var(--bg-light);
+    border-radius: 12px;
 }
 
 .card-hand {
