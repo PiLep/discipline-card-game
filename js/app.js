@@ -11,6 +11,7 @@ class App {
     }
 
     init() {
+        this.initTheme();
         this.renderRegimeSelector();
         this.bindEvents();
         this.renderCalendar();
@@ -47,8 +48,25 @@ class App {
         });
         document.getElementById('save-custom').addEventListener('click', () => this.saveCustomDeck());
 
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        darkModeToggle.addEventListener('change', () => this.toggleDarkMode(darkModeToggle.checked));
+
         // Setup drop zones
         this.setupDropZones();
+    }
+
+    initTheme() {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        document.getElementById('dark-mode-toggle').checked = isDarkMode;
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
+    }
+
+    toggleDarkMode(enabled) {
+        document.body.classList.toggle('dark-mode', enabled);
+        localStorage.setItem('darkMode', enabled);
     }
 
     setupDropZones() {

@@ -58,9 +58,9 @@ const REGIME_MODES = {
         description: 'Régime pauvre en glucides',
         emoji: '🥩',
         deck: {
-            discipline: 17,
-            flex: 3,
-            joker: 1
+            discipline: 15,
+            flex: 4,
+            joker: 2
         }
     },
     keto: {

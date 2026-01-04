@@ -1,4 +1,4 @@
-/* Variables */
+/* Variables - Light Mode (default) */
 :root {
     --discipline: #4CAF50;
     --discipline-light: #81C784;
@@ -9,12 +9,23 @@
     --fasting: #9C27B0;
     --fasting-light: #BA68C8;
 
+    --bg: #f5f5f5;
+    --bg-card: #ffffff;
+    --bg-light: #e8e8e8;
+    --text: #1a1a2e;
+    --text-muted: #666666;
+    --border-radius: 12px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Dark Mode */
+.dark-mode {
     --bg: #1a1a2e;
     --bg-card: #16213e;
     --bg-light: #0f3460;
     --text: #ffffff;
     --text-muted: #a0a0a0;
-    --border-radius: 12px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* Reset */
@@ -60,6 +71,7 @@ body {
     padding: 12px 15px;
     margin: 0 10px 10px;
     border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
 }
 
 .calendar-header {
@@ -201,6 +213,7 @@ body {
     transition: all 0.2s;
     border: 2px dashed transparent;
     flex: 1;
+    box-shadow: var(--shadow);
 }
 
 .meal-drop-zone.main-meal {
@@ -233,47 +246,57 @@ body {
 
 /* Played card in slot */
 .played-card-mini {
-    width: 100%;
-    padding: 10px;
+    width: 70px;
+    height: 95px;
     border-radius: 10px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border: 2px solid rgba(255,255,255,0.1);
+    color: white;
 }
 
 .played-card-mini:hover {
-    transform: scale(1.02);
+    transform: scale(1.05);
 }
 
-.played-card-mini.discipline { background: var(--discipline); }
-.played-card-mini.flex { background: var(--flex); }
-.played-card-mini.joker { background: var(--joker); }
-.played-card-mini.fasting { background: var(--fasting); }
+.played-card-mini.discipline { background: linear-gradient(135deg, var(--discipline) 0%, #388E3C 100%); }
+.played-card-mini.flex { background: linear-gradient(135deg, var(--flex) 0%, #1976D2 100%); }
+.played-card-mini.joker { background: linear-gradient(135deg, var(--joker) 0%, #F57C00 100%); }
+.played-card-mini.fasting { background: linear-gradient(135deg, var(--fasting) 0%, #7B1FA2 100%); }
 
 .played-card-mini .card-emoji {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    margin-bottom: 4px;
 }
 
 .played-card-mini .card-name {
-    font-size: 0.85rem;
+    font-size: 0.65rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .played-card-mini .remove-btn {
-    margin-left: auto;
-    background: rgba(0,0,0,0.2);
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--bg-card);
     border: none;
-    color: white;
-    width: 24px;
-    height: 24px;
+    color: var(--text);
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: var(--shadow);
 }
 
 /* Hand Section */
@@ -282,9 +305,13 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(26, 26, 46, 0.98) 0%, rgba(26, 26, 46, 0.9) 80%, transparent 100%);
+    background: linear-gradient(to top, rgba(245, 245, 245, 0.98) 0%, rgba(245, 245, 245, 0.9) 80%, transparent 100%);
     padding: 10px 10px 20px;
     z-index: 50;
+}
+
+.dark-mode .hand-section {
+    background: linear-gradient(to top, rgba(26, 26, 46, 0.98) 0%, rgba(26, 26, 46, 0.9) 80%, transparent 100%);
 }
 
 .hand-info {
@@ -353,7 +380,7 @@ body {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: var(--bg);
+    background: var(--bg-card);
     color: var(--text);
     width: 24px;
     height: 24px;
@@ -364,6 +391,7 @@ body {
     font-size: 0.75rem;
     font-weight: 700;
     border: 2px solid currentColor;
+    box-shadow: var(--shadow);
 }
 
 .hand-card.discipline .card-count { border-color: var(--discipline); }
@@ -506,6 +534,55 @@ body {
 .close-settings {
     background: var(--bg-light);
     color: var(--text);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    margin: 15px 0;
+    padding: 12px;
+    background: var(--bg-light);
+    border-radius: 10px;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.toggle-label input {
+    display: none;
+}
+
+.toggle-switch {
+    width: 50px;
+    height: 26px;
+    background: var(--text-muted);
+    border-radius: 13px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: all 0.3s;
+}
+
+.toggle-label input:checked + .toggle-switch {
+    background: var(--discipline);
+}
+
+.toggle-label input:checked + .toggle-switch::after {
+    left: 26px;
 }
 
 /* Toast */
