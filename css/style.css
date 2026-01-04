@@ -162,12 +162,14 @@ body {
 .game-board {
     flex: 1;
     padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
 }
 
 .selected-date-title {
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -183,18 +185,26 @@ body {
 
 /* Meal Slots */
 .meal-slots {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
 }
 
 .meal-drop-zone {
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    padding: 12px;
-    min-height: 100px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
     transition: all 0.2s;
     border: 2px dashed transparent;
+    flex: 1;
+}
+
+.meal-drop-zone.main-meal {
+    flex: 2;
 }
 
 .meal-drop-zone.drag-over {
@@ -204,16 +214,15 @@ body {
 }
 
 .meal-label {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    min-width: 100px;
 }
 
 .meal-card-slot {
-    min-height: 60px;
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 .meal-card-slot .empty-slot {
@@ -526,10 +535,6 @@ body {
 
 /* Responsive */
 @media (max-width: 380px) {
-    .meal-slots {
-        grid-template-columns: 1fr;
-    }
-
     .hand-card {
         width: 60px;
         height: 85px;
@@ -537,6 +542,11 @@ body {
 
     .hand-card .card-emoji {
         font-size: 1.5rem;
+    }
+
+    .meal-label {
+        min-width: 80px;
+        font-size: 0.75rem;
     }
 }
 
