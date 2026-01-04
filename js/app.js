@@ -245,10 +245,27 @@ class App {
             { type: 'fasting', ...FASTING_OPTION, count: '∞' }
         ];
 
-        cards.forEach(card => {
+        const totalCards = cards.length;
+        cards.forEach((card, index) => {
             const cardEl = document.createElement('div');
             cardEl.className = `hand-card ${card.type}`;
             cardEl.draggable = true;
+
+            // Arc effect: rotation and vertical offset (responsive)
+            const isMobile = window.innerWidth <= 480;
+            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
+
+            const centerIndex = (totalCards - 1) / 2;
+            const offset = index - centerIndex;
+            const rotation = offset * 5; // 5 degrees per card from center
+            const yOffset = Math.abs(offset) * 12; // Cards on edges are lower
+
+            // Different baseY for different screen sizes
+            const baseY = isMobile ? 20 : isTablet ? 60 : 100;
+
+            cardEl.style.setProperty('--card-rotation', `${rotation}deg`);
+            cardEl.style.setProperty('--card-y', `${baseY + yOffset}px`);
+            cardEl.style.transform = `translateY(${baseY + yOffset}px) rotate(${rotation}deg)`;
 
             const isDisabled = card.type !== 'fasting' && card.count === 0;
             if (isDisabled) {
