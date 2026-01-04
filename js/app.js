@@ -275,11 +275,11 @@ class App {
         const deckInfo = document.getElementById('deck-info');
         const todayMonday = game.getMondayOfWeek();
         if (mondayStr === todayMonday) {
-            deckInfo.textContent = `Semaine en cours • Glisse une carte sur un repas`;
+            deckInfo.innerHTML = `<span class="cta-hint">👆 Glisse une carte sur un repas</span>`;
         } else if (mondayStr < todayMonday) {
-            deckInfo.textContent = `Semaine passée`;
+            deckInfo.innerHTML = `<span class="week-past-hint">Semaine passée</span>`;
         } else {
-            deckInfo.textContent = `Semaine future`;
+            deckInfo.innerHTML = `<span class="week-future-hint">Semaine future</span>`;
         }
     }
 
