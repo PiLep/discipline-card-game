@@ -454,11 +454,12 @@ body {
 .hand-card {
     cursor: grab;
     margin: 0 -30px;
-    transform: translateY(200px);
+    transform: translateY(150px);
+    transform-origin: bottom center;
 }
 
 .hand-card:hover {
-    transform: translateY(20px) scale(1.05);
+    transform: translateY(10px) scale(1.08) rotate(0deg) !important;
     z-index: 100;
 }
 
@@ -472,7 +473,7 @@ body {
 }
 
 .hand-card.disabled:hover {
-    transform: translateY(200px);
+    transform: translateY(var(--card-y, 150px)) rotate(var(--card-rotation, 0deg)) !important;
     z-index: 1;
 }
 
@@ -510,7 +511,7 @@ body {
 /* Dragging state */
 .hand-card.dragging {
     opacity: 0.4;
-    transform: translateY(200px) scale(0.95);
+    transform: translateY(var(--card-y, 150px)) rotate(var(--card-rotation, 0deg)) scale(0.95) !important;
     z-index: 10;
 }
 
@@ -1234,24 +1235,23 @@ body {
 
     .hand-card {
         margin: 0 -20px;
-        transform: translateY(130px);
     }
 
     .hand-card:hover {
-        transform: translateY(20px) scale(1.05);
+        transform: translateY(10px) scale(1.05) rotate(0deg) !important;
     }
 
     .hand-card.disabled:hover {
-        transform: translateY(130px);
+        transform: translateY(var(--card-y, 100px)) rotate(var(--card-rotation, 0deg)) !important;
     }
 
     .card-hand {
-        padding-top: 130px;
-        margin-top: -130px;
+        padding-top: 100px;
+        margin-top: -100px;
     }
 
     .hand-section {
-        height: 160px;
+        height: 180px;
     }
 
     .played-card-mini .remove-btn {
@@ -1348,24 +1348,23 @@ body {
 
     .hand-card {
         margin: 0 -15px;
-        transform: translateY(100px);
     }
 
     .hand-card:hover {
-        transform: translateY(10px) scale(1.05);
+        transform: translateY(5px) scale(1.05) rotate(0deg) !important;
     }
 
     .hand-card.disabled:hover {
-        transform: translateY(100px);
+        transform: translateY(var(--card-y, 80px)) rotate(var(--card-rotation, 0deg)) !important;
     }
 
     .card-hand {
-        padding-top: 100px;
-        margin-top: -100px;
+        padding-top: 80px;
+        margin-top: -80px;
     }
 
     .hand-section {
-        height: 140px;
+        height: 150px;
     }
 
     .cta-hint,
