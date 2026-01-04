@@ -5,36 +5,44 @@
 class App {
     constructor() {
         this.currentMeal = null;
+        this.selectedDate = game.getTodayString();
+        this.displayedWeekMonday = game.getMondayOfWeek();
         this.init();
     }
 
     init() {
-        this.displayDate();
         this.renderRegimeSelector();
         this.bindEvents();
+        this.renderCalendar();
         this.updateUI();
     }
 
     /**
-     * Affiche la date
+     * Noms des jours
      */
-    displayDate() {
-        const options = { weekday: 'long', day: 'numeric', month: 'long' };
-        const date = new Date().toLocaleDateString('fr-FR', options);
-        document.getElementById('current-date').textContent =
-            date.charAt(0).toUpperCase() + date.slice(1);
+    getDayNames() {
+        return ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    }
+
+    /**
+     * Noms des mois
+     */
+    getMonthNames() {
+        return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     }
 
     /**
      * Lie les événements
      */
     bindEvents() {
-        // Boutons "Jouer une carte"
-        document.querySelectorAll('.play-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const slot = e.target.closest('.meal-slot');
-                this.openCardModal(slot.dataset.meal);
-            });
+        // Navigation calendrier
+        document.getElementById('prev-week').addEventListener('click', () => {
+            this.navigateWeek(-1);
+        });
+
+        document.getElementById('next-week').addEventListener('click', () => {
+            this.navigateWeek(1);
         });
 
         // Choix de carte dans la modal
@@ -65,6 +73,84 @@ class App {
     }
 
     /**
+     * Navigation de semaine
+     */
+    navigateWeek(direction) {
+        const current = game.parseDate(this.displayedWeekMonday);
+        current.setDate(current.getDate() + (direction * 7));
+        this.displayedWeekMonday = current.toISOString().split('T')[0];
+        this.renderCalendar();
+    }
+
+    /**
+     * Rendu du calendrier
+     */
+    renderCalendar() {
+        const weekDays = game.getWeekDays(this.displayedWeekMonday);
+        const grid = document.getElementById('calendar-grid');
+        const dayNames = this.getDayNames();
+
+        // Label de la semaine
+        const monday = game.parseDate(this.displayedWeekMonday);
+        const sunday = new Date(monday);
+        sunday.setDate(sunday.getDate() + 6);
+
+        const monthNames = this.getMonthNames();
+        let weekLabel = '';
+
+        if (monday.getMonth() === sunday.getMonth()) {
+            weekLabel = `${monday.getDate()} - ${sunday.getDate()} ${monthNames[monday.getMonth()]}`;
+        } else {
+            weekLabel = `${monday.getDate()} ${monthNames[monday.getMonth()].slice(0, 3)} - ${sunday.getDate()} ${monthNames[sunday.getMonth()].slice(0, 3)}`;
+        }
+
+        document.getElementById('week-label').textContent = weekLabel;
+
+        // Grille des jours
+        grid.innerHTML = '';
+
+        weekDays.forEach(day => {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+
+            if (day.isToday) dayEl.classList.add('today');
+            if (day.date === this.selectedDate) dayEl.classList.add('selected');
+
+            // Status dots (cartes jouées)
+            let statusDots = '';
+            const meals = Object.values(day.meals);
+            meals.forEach(meal => {
+                if (meal) {
+                    statusDots += `<span class="status-dot ${meal.type}"></span>`;
+                } else {
+                    statusDots += `<span class="status-dot empty"></span>`;
+                }
+            });
+
+            dayEl.innerHTML = `
+                <span class="day-name">${dayNames[day.dayOfWeek]}</span>
+                <span class="day-number">${day.dayNumber}</span>
+                <div class="day-status">${statusDots}</div>
+            `;
+
+            dayEl.addEventListener('click', () => {
+                this.selectDate(day.date);
+            });
+
+            grid.appendChild(dayEl);
+        });
+    }
+
+    /**
+     * Sélectionne une date
+     */
+    selectDate(dateStr) {
+        this.selectedDate = dateStr;
+        this.renderCalendar();
+        this.updateUI();
+    }
+
+    /**
      * Crée le sélecteur de régime
      */
     renderRegimeSelector() {
@@ -77,7 +163,7 @@ class App {
             const btn = document.createElement('button');
             btn.className = `regime-btn ${state.regimeMode === mode.id ? 'active' : ''}`;
             btn.textContent = `${mode.emoji} ${mode.name}`;
-            btn.addEventListener('click', () => this.selectRegime(mode.id));
+            btn.addEventListener('click', (e) => this.selectRegime(mode.id, e));
             container.appendChild(btn);
         });
 
@@ -89,9 +175,8 @@ class App {
     /**
      * Sélectionne un régime
      */
-    selectRegime(modeId) {
+    selectRegime(modeId, event) {
         if (modeId === 'custom') {
-            // Afficher les inputs personnalisés
             document.getElementById('custom-deck').style.display = 'block';
         } else {
             game.setRegimeMode(modeId);
@@ -127,6 +212,7 @@ class App {
      */
     updateUI() {
         const state = game.getState();
+        const today = game.getTodayString();
 
         // Deck restant
         document.getElementById('count-discipline').textContent = state.remainingCards.discipline;
@@ -139,10 +225,24 @@ class App {
         document.getElementById('deck-joker').classList.toggle('empty', state.remainingCards.joker === 0);
 
         // Info reset
-        document.getElementById('reset-info').textContent = `Reset dans ${state.daysUntilReset} jour${state.daysUntilReset > 1 ? 's' : ''}`;
+        document.getElementById('reset-info').textContent = `Reset dans ${state.daysUntilReset}j`;
 
-        // Repas
-        this.renderMeals(state.todayMeals);
+        // Titre de la date sélectionnée
+        const titleEl = document.getElementById('selected-date-title');
+        const selectedDate = game.parseDate(this.selectedDate);
+        const options = { weekday: 'long', day: 'numeric', month: 'long' };
+        let dateTitle = selectedDate.toLocaleDateString('fr-FR', options);
+        dateTitle = dateTitle.charAt(0).toUpperCase() + dateTitle.slice(1);
+
+        if (this.selectedDate === today) {
+            titleEl.innerHTML = `${dateTitle} <span class="today-badge">Aujourd'hui</span>`;
+        } else {
+            titleEl.textContent = dateTitle;
+        }
+
+        // Repas du jour sélectionné
+        const meals = game.getDayMeals(this.selectedDate);
+        this.renderMeals(meals);
     }
 
     /**
@@ -188,6 +288,7 @@ class App {
         this.currentMeal = mealType;
         const state = game.getState();
         const mealInfo = MEALS[mealType];
+        const isCurrentWeek = game.isInCurrentWeek(this.selectedDate);
 
         // Nom du repas
         document.getElementById('modal-meal-name').textContent = `${mealInfo.emoji} ${mealInfo.name}`;
@@ -197,10 +298,17 @@ class App {
         document.getElementById('modal-flex-count').textContent = state.remainingCards.flex;
         document.getElementById('modal-joker-count').textContent = state.remainingCards.joker;
 
-        // Désactiver les cartes épuisées
-        document.querySelector('.card-choice.discipline').disabled = state.remainingCards.discipline === 0;
-        document.querySelector('.card-choice.flex').disabled = state.remainingCards.flex === 0;
-        document.querySelector('.card-choice.joker').disabled = state.remainingCards.joker === 0;
+        // Désactiver les cartes épuisées (seulement pour la semaine courante)
+        if (isCurrentWeek) {
+            document.querySelector('.card-choice.discipline').disabled = state.remainingCards.discipline === 0;
+            document.querySelector('.card-choice.flex').disabled = state.remainingCards.flex === 0;
+            document.querySelector('.card-choice.joker').disabled = state.remainingCards.joker === 0;
+        } else {
+            // Pour les autres semaines, toutes les cartes sont disponibles
+            document.querySelector('.card-choice.discipline').disabled = false;
+            document.querySelector('.card-choice.flex').disabled = false;
+            document.querySelector('.card-choice.joker').disabled = false;
+        }
 
         // Afficher la modal
         document.getElementById('card-modal').classList.add('active');
@@ -220,10 +328,11 @@ class App {
     playCard(cardType) {
         if (!this.currentMeal) return;
 
-        const result = game.playCard(this.currentMeal, cardType);
+        const result = game.playCard(this.selectedDate, this.currentMeal, cardType);
 
         if (result.success) {
             this.closeModal();
+            this.renderCalendar();
             this.updateUI();
         } else {
             this.showToast(result.message, true);
@@ -234,9 +343,10 @@ class App {
      * Annule une carte
      */
     cancelCard(mealType) {
-        const result = game.cancelCard(mealType);
+        const result = game.cancelCard(this.selectedDate, mealType);
 
         if (result.success) {
+            this.renderCalendar();
             this.updateUI();
             this.showToast('Carte annulée');
         }

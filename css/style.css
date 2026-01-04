@@ -485,6 +485,129 @@ body {
     color: #f44336;
 }
 
+/* Calendar Section */
+.calendar-section {
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-header .nav-btn {
+    background: var(--bg-light);
+    border: none;
+    color: var(--text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.calendar-header .nav-btn:hover {
+    background: var(--discipline);
+}
+
+.week-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-light);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+    padding: 5px;
+}
+
+.calendar-day:hover {
+    border-color: var(--text-muted);
+}
+
+.calendar-day.selected {
+    border-color: var(--discipline);
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.calendar-day.today {
+    background: var(--bg);
+    border-color: var(--text-muted);
+}
+
+.calendar-day.today.selected {
+    border-color: var(--discipline);
+}
+
+.calendar-day.other-month {
+    opacity: 0.3;
+}
+
+.calendar-day .day-name {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.calendar-day .day-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.calendar-day .day-status {
+    display: flex;
+    gap: 2px;
+    margin-top: 3px;
+}
+
+.calendar-day .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.calendar-day .status-dot.discipline { background: var(--discipline); }
+.calendar-day .status-dot.flex { background: var(--flex); }
+.calendar-day .status-dot.joker { background: var(--joker); }
+.calendar-day .status-dot.fasting { background: var(--fasting); }
+.calendar-day .status-dot.empty { background: var(--text-muted); opacity: 0.3; }
+
+.selected-date-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-date-title .today-badge {
+    font-size: 0.7rem;
+    background: var(--discipline);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
 /* Responsive */
 @media (max-width: 400px) {
     .app {

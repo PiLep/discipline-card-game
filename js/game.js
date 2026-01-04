@@ -5,6 +5,7 @@
  * - Le deck se réinitialise chaque lundi
  * - On place une carte (ou jeûne) par repas
  * - Les cartes dépensées sont retirées du deck
+ * - Navigation dans le calendrier pour voir/modifier les jours
  */
 
 class NutritionGame {
@@ -22,22 +23,12 @@ class NutritionGame {
                 joker: 0
             },
 
-            // Repas de la journée
-            todayDate: null,
-            todayMeals: {
-                breakfast: null,
-                lunch: null,
-                dinner: null,
-                snack: null
-            },
-
-            // Historique (semaines passées)
-            history: []
+            // Données des jours (clé = date YYYY-MM-DD)
+            days: {}
         };
 
         this.loadState();
         this.checkNewWeek();
-        this.checkNewDay();
     }
 
     /**
@@ -82,39 +73,21 @@ class NutritionGame {
     }
 
     /**
-     * Vérifie si c'est une nouvelle semaine (lundi)
+     * Convertit une date string en objet Date
+     */
+    parseDate(dateStr) {
+        return new Date(dateStr + 'T00:00:00');
+    }
+
+    /**
+     * Vérifie si c'est une nouvelle semaine
      */
     checkNewWeek() {
         const currentMonday = this.getMondayOfWeek();
 
         if (this.state.weekStart !== currentMonday) {
-            // Nouvelle semaine - réinitialiser le deck
             this.state.weekStart = currentMonday;
             this.resetDeck();
-            this.saveState();
-        }
-    }
-
-    /**
-     * Vérifie si c'est un nouveau jour
-     */
-    checkNewDay() {
-        const today = this.getTodayString();
-
-        if (this.state.todayDate !== today) {
-            // Archiver la journée précédente
-            if (this.state.todayDate) {
-                this.archiveDay();
-            }
-
-            // Nouveau jour
-            this.state.todayDate = today;
-            this.state.todayMeals = {
-                breakfast: null,
-                lunch: null,
-                dinner: null,
-                snack: null
-            };
             this.saveState();
         }
     }
@@ -134,35 +107,71 @@ class NutritionGame {
     }
 
     /**
-     * Archive les données de la journée
+     * Obtient les repas d'un jour donné
      */
-    archiveDay() {
-        const dayData = {
-            date: this.state.todayDate,
-            meals: { ...this.state.todayMeals }
-        };
-
-        this.state.history.push(dayData);
-
-        // Garder 60 jours d'historique
-        if (this.state.history.length > 60) {
-            this.state.history.shift();
+    getDayMeals(dateStr) {
+        if (!this.state.days[dateStr]) {
+            return {
+                breakfast: null,
+                lunch: null,
+                dinner: null,
+                snack: null
+            };
         }
+        return this.state.days[dateStr].meals;
     }
 
     /**
-     * Joue une carte pour un repas
+     * Vérifie si une date est dans la semaine courante
      */
-    playCard(mealType, cardType) {
+    isInCurrentWeek(dateStr) {
+        const monday = this.getMondayOfWeek();
+        const date = this.parseDate(dateStr);
+        const mondayDate = this.parseDate(monday);
+        const sundayDate = new Date(mondayDate);
+        sundayDate.setDate(sundayDate.getDate() + 6);
+
+        return date >= mondayDate && date <= sundayDate;
+    }
+
+    /**
+     * Joue une carte pour un repas à une date donnée
+     */
+    playCard(dateStr, mealType, cardType) {
+        // Initialiser le jour si nécessaire
+        if (!this.state.days[dateStr]) {
+            this.state.days[dateStr] = {
+                meals: {
+                    breakfast: null,
+                    lunch: null,
+                    dinner: null,
+                    snack: null
+                }
+            };
+        }
+
+        const dayMeals = this.state.days[dateStr].meals;
+
         // Vérifier si le repas est déjà pris
-        if (this.state.todayMeals[mealType] !== null) {
+        if (dayMeals[mealType] !== null) {
             return { success: false, message: 'Ce repas a déjà une carte' };
         }
 
         // Gérer le jeûne (pas de carte consommée)
         if (cardType === 'fasting') {
-            this.state.todayMeals[mealType] = {
+            dayMeals[mealType] = {
                 type: 'fasting',
+                timestamp: Date.now()
+            };
+            this.saveState();
+            return { success: true };
+        }
+
+        // Vérifier si la date est dans la semaine courante (pour utiliser le deck)
+        if (!this.isInCurrentWeek(dateStr)) {
+            // Pour les autres semaines, on ne vérifie pas le deck
+            dayMeals[mealType] = {
+                type: cardType,
                 timestamp: Date.now()
             };
             this.saveState();
@@ -179,7 +188,7 @@ class NutritionGame {
 
         // Jouer la carte
         this.state.remainingCards[cardType]--;
-        this.state.todayMeals[mealType] = {
+        dayMeals[mealType] = {
             type: cardType,
             timestamp: Date.now()
         };
@@ -194,21 +203,80 @@ class NutritionGame {
     /**
      * Annule une carte jouée
      */
-    cancelCard(mealType) {
-        const meal = this.state.todayMeals[mealType];
+    cancelCard(dateStr, mealType) {
+        if (!this.state.days[dateStr]) {
+            return { success: false, message: 'Aucune carte à annuler' };
+        }
+
+        const meal = this.state.days[dateStr].meals[mealType];
         if (!meal) {
             return { success: false, message: 'Aucune carte à annuler' };
         }
 
-        // Remettre la carte dans le deck (sauf jeûne)
-        if (meal.type !== 'fasting') {
+        // Remettre la carte dans le deck si dans la semaine courante
+        if (meal.type !== 'fasting' && this.isInCurrentWeek(dateStr)) {
             this.state.remainingCards[meal.type]++;
         }
 
-        this.state.todayMeals[mealType] = null;
+        this.state.days[dateStr].meals[mealType] = null;
         this.saveState();
 
         return { success: true };
+    }
+
+    /**
+     * Obtient le résumé d'un jour
+     */
+    getDaySummary(dateStr) {
+        const meals = this.getDayMeals(dateStr);
+        const summary = {
+            total: 0,
+            filled: 0,
+            cards: {
+                discipline: 0,
+                flex: 0,
+                joker: 0,
+                fasting: 0
+            }
+        };
+
+        Object.values(meals).forEach(meal => {
+            summary.total++;
+            if (meal) {
+                summary.filled++;
+                if (summary.cards[meal.type] !== undefined) {
+                    summary.cards[meal.type]++;
+                }
+            }
+        });
+
+        return summary;
+    }
+
+    /**
+     * Obtient les jours d'une semaine
+     */
+    getWeekDays(mondayStr) {
+        const monday = this.parseDate(mondayStr);
+        const days = [];
+        const today = this.getTodayString();
+
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(monday);
+            date.setDate(date.getDate() + i);
+            const dateStr = date.toISOString().split('T')[0];
+
+            days.push({
+                date: dateStr,
+                dayOfWeek: date.getDay(),
+                dayNumber: date.getDate(),
+                isToday: dateStr === today,
+                meals: this.getDayMeals(dateStr),
+                summary: this.getDaySummary(dateStr)
+            });
+        }
+
+        return days;
     }
 
     /**

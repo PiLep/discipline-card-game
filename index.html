@@ -11,7 +11,6 @@
         <!-- Header -->
         <header class="header">
             <h1>Discipline Nutrition</h1>
-            <p class="date" id="current-date"></p>
         </header>
 
         <!-- Deck restant -->
@@ -39,9 +38,19 @@
             </div>
         </section>
 
-        <!-- Repas du jour -->
+        <!-- Calendrier -->
+        <section class="calendar-section">
+            <div class="calendar-header">
+                <button class="nav-btn" id="prev-week">&larr;</button>
+                <span class="week-label" id="week-label"></span>
+                <button class="nav-btn" id="next-week">&rarr;</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+        </section>
+
+        <!-- Repas du jour sélectionné -->
         <section class="meals-section">
-            <h2>Aujourd'hui</h2>
+            <h2 class="selected-date-title" id="selected-date-title">Aujourd'hui</h2>
             <div class="meals-grid">
                 <div class="meal-slot" data-meal="breakfast">
                     <div class="meal-header">
