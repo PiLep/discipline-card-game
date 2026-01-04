@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discipline Nutrition - Jeu de Cartes</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header avec stats -->
+        <header class="header">
+            <h1>🥗 Discipline Nutrition</h1>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-icon">🔥</span>
+                    <span class="stat-value" id="streak">0</span>
+                    <span class="stat-label">jours</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="points">0</span>
+                    <span class="stat-label">points</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-value" id="level">1</span>
+                    <span class="stat-label">niveau</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation par onglets -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="journal">📝 Journal</button>
+            <button class="tab" data-tab="defis">🎯 Défis</button>
+            <button class="tab" data-tab="collection">🃏 Collection</button>
+            <button class="tab" data-tab="regime">📋 Régime</button>
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="main-content">
+            <!-- Onglet Journal -->
+            <section id="journal" class="tab-content active">
+                <h2>Journal du jour</h2>
+                <p class="date-display" id="current-date"></p>
+
+                <div class="meal-sections">
+                    <div class="meal-section">
+                        <h3>🌅 Petit-déjeuner</h3>
+                        <div class="cards-container" id="breakfast-cards"></div>
+                        <button class="add-card-btn" data-meal="breakfast">+ Ajouter</button>
+                    </div>
+
+                    <div class="meal-section">
+                        <h3>☀️ Déjeuner</h3>
+                        <div class="cards-container" id="lunch-cards"></div>
+                        <button class="add-card-btn" data-meal="lunch">+ Ajouter</button>
+                    </div>
+
+                    <div class="meal-section">
+                        <h3>🌙 Dîner</h3>
+                        <div class="cards-container" id="dinner-cards"></div>
+                        <button class="add-card-btn" data-meal="dinner">+ Ajouter</button>
+                    </div>
+
+                    <div class="meal-section">
+                        <h3>🍎 Collations</h3>
+                        <div class="cards-container" id="snacks-cards"></div>
+                        <button class="add-card-btn" data-meal="snacks">+ Ajouter</button>
+                    </div>
+                </div>
+
+                <div class="daily-summary">
+                    <h3>Résumé du jour</h3>
+                    <div class="summary-stats">
+                        <div class="summary-item">
+                            <span class="summary-label">Points gagnés:</span>
+                            <span class="summary-value" id="daily-points">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Respect du régime:</span>
+                            <span class="summary-value" id="compliance">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Onglet Défis -->
+            <section id="defis" class="tab-content">
+                <h2>Défis du jour</h2>
+                <div class="challenges-container" id="daily-challenges"></div>
+
+                <h2>Défis hebdomadaires</h2>
+                <div class="challenges-container" id="weekly-challenges"></div>
+            </section>
+
+            <!-- Onglet Collection -->
+            <section id="collection" class="tab-content">
+                <h2>Ma Collection de Cartes</h2>
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all">Toutes</button>
+                    <button class="filter-btn" data-filter="proteins">Protéines</button>
+                    <button class="filter-btn" data-filter="vegetables">Légumes</button>
+                    <button class="filter-btn" data-filter="fruits">Fruits</button>
+                    <button class="filter-btn" data-filter="grains">Féculents</button>
+                    <button class="filter-btn" data-filter="dairy">Produits laitiers</button>
+                    <button class="filter-btn" data-filter="treats">Plaisirs</button>
+                </div>
+                <div class="collection-grid" id="collection-grid"></div>
+            </section>
+
+            <!-- Onglet Régime -->
+            <section id="regime" class="tab-content">
+                <h2>Mon Régime</h2>
+                <div class="regime-config">
+                    <div class="regime-option">
+                        <label>Type de régime:</label>
+                        <select id="regime-type">
+                            <option value="balanced">Équilibré</option>
+                            <option value="lowcarb">Faible en glucides</option>
+                            <option value="highprotein">Riche en protéines</option>
+                            <option value="vegetarian">Végétarien</option>
+                            <option value="vegan">Végan</option>
+                            <option value="custom">Personnalisé</option>
+                        </select>
+                    </div>
+
+                    <div class="regime-goals">
+                        <h3>Objectifs quotidiens</h3>
+                        <div class="goal-item">
+                            <label>Protéines:</label>
+                            <input type="number" id="goal-proteins" value="3" min="0" max="10">
+                            <span>portions</span>
+                        </div>
+                        <div class="goal-item">
+                            <label>Légumes:</label>
+                            <input type="number" id="goal-vegetables" value="5" min="0" max="10">
+                            <span>portions</span>
+                        </div>
+                        <div class="goal-item">
+                            <label>Fruits:</label>
+                            <input type="number" id="goal-fruits" value="2" min="0" max="10">
+                            <span>portions</span>
+                        </div>
+                        <div class="goal-item">
+                            <label>Féculents:</label>
+                            <input type="number" id="goal-grains" value="3" min="0" max="10">
+                            <span>portions</span>
+                        </div>
+                        <div class="goal-item">
+                            <label>Produits laitiers:</label>
+                            <input type="number" id="goal-dairy" value="2" min="0" max="10">
+                            <span>portions</span>
+                        </div>
+                        <div class="goal-item">
+                            <label>Plaisirs max:</label>
+                            <input type="number" id="goal-treats" value="1" min="0" max="5">
+                            <span>par jour</span>
+                        </div>
+                    </div>
+
+                    <button class="save-btn" id="save-regime">Sauvegarder</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal pour ajouter une carte -->
+        <div class="modal" id="add-card-modal">
+            <div class="modal-content">
+                <button class="modal-close">&times;</button>
+                <h2>Ajouter un aliment</h2>
+                <div class="card-selector">
+                    <input type="text" id="search-food" placeholder="Rechercher un aliment...">
+                    <div class="food-cards-grid" id="food-cards-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de félicitations -->
+        <div class="modal" id="congrats-modal">
+            <div class="modal-content congrats">
+                <h2 id="congrats-title">🎉 Félicitations!</h2>
+                <p id="congrats-message"></p>
+                <button class="close-congrats-btn">Super!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/cards-data.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
