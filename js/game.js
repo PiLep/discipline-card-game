@@ -54,29 +54,41 @@ class NutritionGame {
     }
 
     /**
+     * Formate une date en YYYY-MM-DD (sans conversion UTC)
+     */
+    formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    /**
      * Obtient le lundi de la semaine pour une date donnée
      */
     getMondayOfWeek(date = new Date()) {
         const d = new Date(date);
         const day = d.getDay();
-        const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-        d.setDate(diff);
+        // Dimanche = 0, on recule de 6 jours. Sinon on recule de (day - 1) jours
+        const diff = day === 0 ? -6 : 1 - day;
+        d.setDate(d.getDate() + diff);
         d.setHours(0, 0, 0, 0);
-        return d.toISOString().split('T')[0];
+        return this.formatDate(d);
     }
 
     /**
      * Obtient la date d'aujourd'hui
      */
     getTodayString() {
-        return new Date().toISOString().split('T')[0];
+        return this.formatDate(new Date());
     }
 
     /**
      * Convertit une date string en objet Date
      */
     parseDate(dateStr) {
-        return new Date(dateStr + 'T00:00:00');
+        const [year, month, day] = dateStr.split('-').map(Number);
+        return new Date(year, month - 1, day);
     }
 
     /**
@@ -264,7 +276,7 @@ class NutritionGame {
         for (let i = 0; i < 7; i++) {
             const date = new Date(monday);
             date.setDate(date.getDate() + i);
-            const dateStr = date.toISOString().split('T')[0];
+            const dateStr = this.formatDate(date);
 
             days.push({
                 date: dateStr,

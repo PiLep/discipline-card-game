@@ -78,7 +78,7 @@ class App {
     navigateWeek(direction) {
         const current = game.parseDate(this.displayedWeekMonday);
         current.setDate(current.getDate() + (direction * 7));
-        this.displayedWeekMonday = current.toISOString().split('T')[0];
+        this.displayedWeekMonday = game.formatDate(current);
         this.renderCalendar();
     }
 
