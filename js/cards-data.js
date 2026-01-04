@@ -43,9 +43,9 @@ const FASTING_OPTION = {
 };
 
 const MEALS = {
-    breakfast: { id: 'breakfast', name: 'Petit-déjeuner', emoji: '🌅' },
-    lunch: { id: 'lunch', name: 'Déjeuner', emoji: '☀️' },
-    dinner: { id: 'dinner', name: 'Dîner', emoji: '🌙' }
+    breakfast: { id: 'breakfast', name: 'Petit-déjeuner' },
+    lunch: { id: 'lunch', name: 'Déjeuner' },
+    dinner: { id: 'dinner', name: 'Dîner' }
 };
 
 /**
@@ -56,7 +56,6 @@ const REGIME_MODES = {
         id: 'lowcarb',
         name: 'Low Carb',
         description: 'Régime pauvre en glucides',
-        emoji: '🥩',
         deck: {
             discipline: 15,
             flex: 4,
@@ -67,7 +66,6 @@ const REGIME_MODES = {
         id: 'keto',
         name: 'Keto',
         description: 'Régime cétogène strict',
-        emoji: '🥓',
         deck: {
             discipline: 19,
             flex: 1,
@@ -78,7 +76,6 @@ const REGIME_MODES = {
         id: 'balanced',
         name: 'Équilibré',
         description: 'Alimentation équilibrée',
-        emoji: '⚖️',
         deck: {
             discipline: 10,
             flex: 8,
@@ -89,7 +86,6 @@ const REGIME_MODES = {
         id: 'moderate',
         name: 'Modéré',
         description: 'Contrôle modéré',
-        emoji: '🎯',
         deck: {
             discipline: 14,
             flex: 5,
@@ -100,7 +96,6 @@ const REGIME_MODES = {
         id: 'custom',
         name: 'Personnalisé',
         description: 'Ton propre deck',
-        emoji: '✏️',
         deck: {
             discipline: 10,
             flex: 8,

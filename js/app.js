@@ -276,7 +276,7 @@ class App {
         const deckInfo = document.getElementById('deck-info');
         const todayMonday = game.getMondayOfWeek();
         if (mondayStr === todayMonday) {
-            deckInfo.innerHTML = `<span class="cta-hint">👆 Glisse une carte sur un repas</span>`;
+            deckInfo.innerHTML = `<span class="cta-hint">Glisse une carte sur un repas</span>`;
         } else if (mondayStr < todayMonday) {
             deckInfo.innerHTML = `<span class="week-past-hint">Semaine passée</span>`;
         } else {
@@ -380,7 +380,7 @@ class App {
         Object.values(REGIME_MODES).forEach(mode => {
             const btn = document.createElement('button');
             btn.className = `regime-btn ${weekState.regimeMode === mode.id ? 'active' : ''}`;
-            btn.textContent = `${mode.emoji} ${mode.name}`;
+            btn.textContent = mode.name;
             btn.addEventListener('click', (e) => this.selectRegime(mode.id, e));
             container.appendChild(btn);
         });
