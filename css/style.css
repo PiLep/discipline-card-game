@@ -308,12 +308,11 @@ body {
     flex-wrap: wrap;
 }
 
-/* Hearthstone-style Cards - Full card image */
+/* Hearthstone-style Cards - Full card image (transparent PNG) */
 .hand-card,
 .played-card-mini {
     width: 140px;
     height: 200px;
-    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -321,8 +320,6 @@ body {
     position: relative;
     background: transparent;
     border: none;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    overflow: hidden;
 }
 
 .hand-card {
@@ -332,7 +329,6 @@ body {
 .hand-card:hover {
     transform: translateY(-15px) scale(1.08);
     z-index: 10;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
 }
 
 .hand-card:active {
@@ -351,7 +347,6 @@ body {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    border-radius: 10px;
 }
 
 /* Counter badge - positioned on top of card */
@@ -383,9 +378,6 @@ body {
     opacity: 0.9;
     transform: scale(1.15) rotate(3deg);
     z-index: 100;
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.5),
-        0 0 30px rgba(212, 175, 55, 0.4);
 }
 
 /* Settings */
