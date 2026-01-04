@@ -204,7 +204,7 @@ class App {
             cardEl.innerHTML = `
                 ${card.type !== 'fasting' ? `<span class="card-count">${card.count}</span>` : ''}
                 <div class="card-art">
-                    <span class="card-emoji">${card.emoji}</span>
+                    <img class="card-image" src="${card.image}" alt="${card.name}" draggable="false">
                 </div>
                 <div class="card-banner">
                     <span class="card-name">${card.name}</span>
@@ -314,7 +314,7 @@ class App {
                 slot.innerHTML = `
                     <div class="played-card-mini ${meal.type}">
                         <div class="card-art">
-                            <span class="card-emoji">${cardInfo.emoji}</span>
+                            <img class="card-image" src="${cardInfo.image}" alt="${cardInfo.name}">
                         </div>
                         <div class="card-banner">
                             <span class="card-name">${cardInfo.name}</span>

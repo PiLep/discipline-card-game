@@ -440,8 +440,11 @@ body {
     box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 8px rgba(156, 39, 176, 0.4);
 }
 
-.card-emoji {
-    font-size: 1.8rem;
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
     filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
     z-index: 1;
 }
@@ -735,10 +738,6 @@ body {
         width: 52px;
         height: 40px;
         margin-top: 10px;
-    }
-
-    .card-emoji {
-        font-size: 1.5rem;
     }
 
     .card-banner {
