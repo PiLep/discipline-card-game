@@ -113,7 +113,7 @@ class NutritionGame {
         } else if (mode) {
             deck = { ...mode.deck };
         } else {
-            deck = { discipline: 14, flex: 10, joker: 4 };
+            deck = { discipline: 10, flex: 8, joker: 3 };
         }
 
         this.state.weeks[mondayStr] = {
@@ -130,8 +130,7 @@ class NutritionGame {
             return {
                 breakfast: null,
                 lunch: null,
-                dinner: null,
-                snack: null
+                dinner: null
             };
         }
         return this.state.days[dateStr].meals;
@@ -147,8 +146,7 @@ class NutritionGame {
                 meals: {
                     breakfast: null,
                     lunch: null,
-                    dinner: null,
-                    snack: null
+                    dinner: null
                 }
             };
         }
