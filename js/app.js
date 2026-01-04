@@ -565,6 +565,7 @@ class App {
                 <div class="regime-info">
                     <strong>${regime.name}</strong>
                     <p>${regime.description}</p>
+                    <span class="regime-hint">${regime.hint}</span>
                 </div>
             `;
             el.addEventListener('click', () => this.selectOnboardingRegime(regime.id));
