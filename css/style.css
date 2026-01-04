@@ -244,34 +244,35 @@ body {
     opacity: 0.5;
 }
 
-/* Played card in slot - uses same base as hand-card */
+/* Played card in slot - remove button (centered, visible on hover) */
 .played-card-mini .remove-btn {
     position: absolute;
-    top: -14px;
-    right: -14px;
-    background: linear-gradient(180deg, #5a5a6e 0%, #3a3a4e 100%);
-    border: 3px solid #8b7355;
-    color: #e8e8e8;
-    width: 36px;
-    height: 36px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.4rem;
+    font-size: 1.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    opacity: 0;
     transition: all 0.2s;
     z-index: 5;
 }
 
-.played-card-mini .remove-btn:hover {
-    background: linear-gradient(180deg, #c62828 0%, #8e0000 100%);
-    border-color: #ef5350;
+.played-card-mini:hover .remove-btn {
+    opacity: 1;
 }
 
-.played-card-mini:hover {
-    transform: scale(1.05);
+.played-card-mini .remove-btn:hover {
+    background: rgba(198, 40, 40, 0.9);
+    transform: translate(-50%, -50%) scale(1.1);
 }
 
 .played-card-mini {
