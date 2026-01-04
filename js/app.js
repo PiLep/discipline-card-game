@@ -256,10 +256,11 @@ class App {
             const offset = index - centerIndex;
             const rotation = offset * 4; // 4 degrees per card from center
             const yOffset = Math.abs(offset) * 8; // Cards on edges are lower
+            const baseY = 100; // Base vertical position
 
             cardEl.style.setProperty('--card-rotation', `${rotation}deg`);
-            cardEl.style.setProperty('--card-y', `${150 + yOffset}px`);
-            cardEl.style.transform = `translateY(${150 + yOffset}px) rotate(${rotation}deg)`;
+            cardEl.style.setProperty('--card-y', `${baseY + yOffset}px`);
+            cardEl.style.transform = `translateY(${baseY + yOffset}px) rotate(${rotation}deg)`;
 
             const isDisabled = card.type !== 'fasting' && card.count === 0;
             if (isDisabled) {

@@ -386,7 +386,7 @@ body {
     background: linear-gradient(to top, var(--bg) 0%, var(--bg) 50%, transparent 100%);
     padding: 0 20px calc(10px + env(safe-area-inset-bottom));
     z-index: 50;
-    height: calc(200px + env(safe-area-inset-bottom));
+    height: calc(250px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -454,7 +454,7 @@ body {
 .hand-card {
     cursor: grab;
     margin: 0 -30px;
-    transform: translateY(150px);
+    transform: translateY(100px);
     transform-origin: bottom center;
 }
 
@@ -473,7 +473,7 @@ body {
 }
 
 .hand-card.disabled:hover {
-    transform: translateY(var(--card-y, 150px)) rotate(var(--card-rotation, 0deg)) !important;
+    transform: translateY(var(--card-y, 100px)) rotate(var(--card-rotation, 0deg)) !important;
     z-index: 1;
 }
 
@@ -1242,16 +1242,16 @@ body {
     }
 
     .hand-card.disabled:hover {
-        transform: translateY(var(--card-y, 100px)) rotate(var(--card-rotation, 0deg)) !important;
+        transform: translateY(var(--card-y, 80px)) rotate(var(--card-rotation, 0deg)) !important;
     }
 
     .card-hand {
-        padding-top: 100px;
-        margin-top: -100px;
+        padding-top: 80px;
+        margin-top: -80px;
     }
 
     .hand-section {
-        height: 180px;
+        height: 200px;
     }
 
     .played-card-mini .remove-btn {
@@ -1355,16 +1355,16 @@ body {
     }
 
     .hand-card.disabled:hover {
-        transform: translateY(var(--card-y, 80px)) rotate(var(--card-rotation, 0deg)) !important;
+        transform: translateY(var(--card-y, 50px)) rotate(var(--card-rotation, 0deg)) !important;
     }
 
     .card-hand {
-        padding-top: 80px;
-        margin-top: -80px;
+        padding-top: 50px;
+        margin-top: -50px;
     }
 
     .hand-section {
-        height: 150px;
+        height: 180px;
     }
 
     .cta-hint,
