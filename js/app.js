@@ -18,6 +18,7 @@ class App {
         this.renderHand();
         this.renderMealSlots();
         this.updateUI();
+        this.initOnboarding();
     }
 
     getDayNames() {
@@ -54,6 +55,9 @@ class App {
         // Dark mode toggle
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         darkModeToggle.addEventListener('change', () => this.toggleDarkMode(darkModeToggle.checked));
+
+        // Restart tutorial
+        document.getElementById('restart-tuto').addEventListener('click', () => this.restartTutorial());
 
         // Setup drop zones
         this.setupDropZones();
@@ -314,12 +318,16 @@ class App {
                         touchGhost.style.top = (touch.clientY - cardEl.offsetHeight / 2) + 'px';
                     }
 
-                    // Highlight drop zone sous le doigt
-                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
-                    if (element && element.closest('.meal-drop-zone')) {
-                        element.closest('.meal-drop-zone').classList.add('drag-over');
-                    }
+                    // Highlight drop zone sous le doigt (par coordonnées, pas elementFromPoint)
+                    document.querySelectorAll('.meal-drop-zone').forEach(z => {
+                        const rect = z.getBoundingClientRect();
+                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                            z.classList.add('drag-over');
+                        } else {
+                            z.classList.remove('drag-over');
+                        }
+                    });
                 }, { passive: false });
 
                 cardEl.addEventListener('touchend', (e) => {
@@ -335,12 +343,20 @@ class App {
                     }
 
                     const touch = e.changedTouches[0];
-                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
 
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
+                    // Trouver la drop zone par coordonnées
+                    let targetZone = null;
+                    document.querySelectorAll('.meal-drop-zone').forEach(z => {
+                        const rect = z.getBoundingClientRect();
+                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                            targetZone = z;
+                        }
+                        z.classList.remove('drag-over');
+                    });
 
-                    if (element && element.closest('.meal-drop-zone')) {
-                        const mealType = element.closest('.meal-drop-zone').dataset.meal;
+                    if (targetZone) {
+                        const mealType = targetZone.dataset.meal;
                         this.playCard(mealType, this.draggedCard);
                     }
                     this.draggedCard = null;
@@ -516,6 +532,131 @@ class App {
         toast.classList.toggle('error', isError);
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Onboarding
+    initOnboarding() {
+        const onboardingComplete = localStorage.getItem('onboardingComplete');
+        const onboarding = document.getElementById('onboarding');
+
+        // Always render and bind (needed for restart tutorial)
+        this.renderOnboardingRegimes();
+        this.bindOnboardingEvents();
+
+        // Hide if already completed
+        if (onboardingComplete) {
+            onboarding.style.display = 'none';
+        }
+    }
+
+    renderOnboardingRegimes() {
+        const container = document.getElementById('onboarding-regimes');
+        container.innerHTML = '';
+
+        // Exclude 'custom' from onboarding
+        const regimes = Object.values(REGIME_MODES).filter(r => r.id !== 'custom');
+
+        regimes.forEach(regime => {
+            const el = document.createElement('div');
+            el.className = 'onboarding-regime';
+            el.dataset.regime = regime.id;
+            el.innerHTML = `
+                <span class="regime-radio"></span>
+                <div class="regime-info">
+                    <strong>${regime.name}</strong>
+                    <p>${regime.description}</p>
+                    <span class="regime-hint">${regime.hint}</span>
+                </div>
+            `;
+            el.addEventListener('click', () => this.selectOnboardingRegime(regime.id));
+            container.appendChild(el);
+        });
+    }
+
+    selectOnboardingRegime(regimeId) {
+        // Update UI
+        document.querySelectorAll('.onboarding-regime').forEach(el => {
+            el.classList.toggle('selected', el.dataset.regime === regimeId);
+        });
+
+        // Store selection
+        this.selectedOnboardingRegime = regimeId;
+
+        // Enable continue button
+        document.getElementById('onboarding-regime-btn').disabled = false;
+    }
+
+    bindOnboardingEvents() {
+        // Next step buttons
+        document.querySelectorAll('.onboarding-btn[data-next]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nextStep = btn.dataset.next;
+                this.goToOnboardingStep(nextStep);
+            });
+        });
+
+        // Finish button
+        document.getElementById('onboarding-finish').addEventListener('click', () => {
+            this.completeOnboarding();
+        });
+    }
+
+    goToOnboardingStep(stepNumber) {
+        // Hide all steps
+        document.querySelectorAll('.onboarding-step').forEach(step => {
+            step.style.display = 'none';
+        });
+
+        // Show target step
+        const targetStep = document.querySelector(`.onboarding-step[data-step="${stepNumber}"]`);
+        if (targetStep) {
+            targetStep.style.display = 'block';
+            // Re-trigger animation
+            targetStep.style.animation = 'none';
+            targetStep.offsetHeight; // Trigger reflow
+            targetStep.style.animation = 'fadeInUp 0.4s ease-out';
+        }
+    }
+
+    completeOnboarding() {
+        // Apply selected regime
+        if (this.selectedOnboardingRegime) {
+            game.setRegimeMode(this.selectedOnboardingRegime);
+            this.renderRegimeSelector();
+            this.renderHand();
+        }
+
+        // Mark onboarding as complete
+        localStorage.setItem('onboardingComplete', 'true');
+
+        // Hide onboarding with animation
+        const onboarding = document.getElementById('onboarding');
+        onboarding.classList.add('hidden');
+        setTimeout(() => {
+            onboarding.style.display = 'none';
+        }, 300);
+    }
+
+    restartTutorial() {
+        // Close settings panel
+        document.getElementById('settings-panel').classList.remove('active');
+
+        // Reset onboarding state
+        this.selectedOnboardingRegime = null;
+
+        // Reset UI
+        document.querySelectorAll('.onboarding-regime').forEach(el => {
+            el.classList.remove('selected');
+        });
+        document.getElementById('onboarding-regime-btn').disabled = true;
+
+        // Go to step 1
+        this.goToOnboardingStep(1);
+
+        // Show onboarding
+        const onboarding = document.getElementById('onboarding');
+        onboarding.style.display = 'flex';
+        onboarding.classList.remove('hidden');
     }
 }
 
