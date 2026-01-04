@@ -539,16 +539,14 @@ class App {
         const onboardingComplete = localStorage.getItem('onboardingComplete');
         const onboarding = document.getElementById('onboarding');
 
+        // Always render and bind (needed for restart tutorial)
+        this.renderOnboardingRegimes();
+        this.bindOnboardingEvents();
+
+        // Hide if already completed
         if (onboardingComplete) {
             onboarding.style.display = 'none';
-            return;
         }
-
-        // Render regime options
-        this.renderOnboardingRegimes();
-
-        // Bind onboarding events
-        this.bindOnboardingEvents();
     }
 
     renderOnboardingRegimes() {
