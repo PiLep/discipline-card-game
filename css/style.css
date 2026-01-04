@@ -103,6 +103,33 @@ body {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.week-status {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.week-status.current {
+    background: var(--discipline);
+    color: white;
+}
+
+.week-status.past {
+    background: var(--text-muted);
+    color: white;
+}
+
+.week-status.future {
+    background: var(--flex);
+    color: white;
 }
 
 .calendar-grid {
