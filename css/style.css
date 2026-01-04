@@ -244,59 +244,139 @@ body {
     opacity: 0.5;
 }
 
-/* Played card in slot */
+/* Played card in slot - Hearthstone style */
 .played-card-mini {
     width: 70px;
     height: 95px;
-    border-radius: 10px;
+    border-radius: 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255,255,255,0.1);
-    color: white;
+    background: #2a2a3e;
+    border: 2px solid #8b7355;
+    box-shadow:
+        0 3px 6px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+.played-card-mini::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 4px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    pointer-events: none;
 }
 
 .played-card-mini:hover {
     transform: scale(1.05);
+    box-shadow:
+        0 6px 12px rgba(0,0,0,0.5),
+        0 0 15px rgba(212, 175, 55, 0.2);
 }
 
-.played-card-mini.discipline { background: linear-gradient(135deg, var(--discipline) 0%, #388E3C 100%); }
-.played-card-mini.flex { background: linear-gradient(135deg, var(--flex) 0%, #1976D2 100%); }
-.played-card-mini.joker { background: linear-gradient(135deg, var(--joker) 0%, #F57C00 100%); }
-.played-card-mini.fasting { background: linear-gradient(135deg, var(--fasting) 0%, #7B1FA2 100%); }
+/* Card type backgrounds */
+.played-card-mini.discipline {
+    background: linear-gradient(180deg, #1a3d1a 0%, #0d1f0d 100%);
+    border-color: #2d5a2d;
+}
+.played-card-mini.discipline::before { border-color: rgba(76, 175, 80, 0.4); }
+
+.played-card-mini.flex {
+    background: linear-gradient(180deg, #1a2d4d 0%, #0d1a2d 100%);
+    border-color: #2d4a6d;
+}
+.played-card-mini.flex::before { border-color: rgba(33, 150, 243, 0.4); }
+
+.played-card-mini.joker {
+    background: linear-gradient(180deg, #4d3319 0%, #2d1f0d 100%);
+    border-color: #6d4a1a;
+}
+.played-card-mini.joker::before { border-color: rgba(255, 152, 0, 0.4); }
+
+.played-card-mini.fasting {
+    background: linear-gradient(180deg, #3d1a4d 0%, #1f0d2d 100%);
+    border-color: #5a2d6d;
+}
+.played-card-mini.fasting::before { border-color: rgba(156, 39, 176, 0.4); }
+
+.played-card-mini .card-art {
+    width: 46px;
+    height: 34px;
+    margin-top: 8px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.played-card-mini.discipline .card-art {
+    background: radial-gradient(ellipse at center, #4CAF50 0%, #2E7D32 70%, #1B5E20 100%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 5px rgba(76, 175, 80, 0.3);
+}
+.played-card-mini.flex .card-art {
+    background: radial-gradient(ellipse at center, #2196F3 0%, #1565C0 70%, #0D47A1 100%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 5px rgba(33, 150, 243, 0.3);
+}
+.played-card-mini.joker .card-art {
+    background: radial-gradient(ellipse at center, #FF9800 0%, #EF6C00 70%, #E65100 100%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 5px rgba(255, 152, 0, 0.3);
+}
+.played-card-mini.fasting .card-art {
+    background: radial-gradient(ellipse at center, #9C27B0 0%, #7B1FA2 70%, #4A148C 100%);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.3), 0 0 5px rgba(156, 39, 176, 0.3);
+}
 
 .played-card-mini .card-emoji {
-    font-size: 1.8rem;
-    margin-bottom: 4px;
+    font-size: 1.3rem;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+.played-card-mini .card-banner {
+    width: 85%;
+    margin-top: 5px;
+    padding: 2px 4px;
+    background: linear-gradient(180deg, #4a4a5e 0%, #2a2a3e 100%);
+    border-radius: 2px;
+    border: 1px solid #5a5a6e;
 }
 
 .played-card-mini .card-name {
-    font-size: 0.65rem;
-    font-weight: 600;
+    font-size: 0.5rem;
+    font-weight: 700;
     text-align: center;
+    color: #e8e8e8;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    display: block;
 }
 
 .played-card-mini .remove-btn {
     position: absolute;
     top: -8px;
     right: -8px;
-    background: var(--bg-card);
-    border: none;
-    color: var(--text);
-    width: 22px;
-    height: 22px;
+    background: linear-gradient(180deg, #5a5a6e 0%, #3a3a4e 100%);
+    border: 2px solid #8b7355;
+    color: #e8e8e8;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: var(--shadow);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+}
+
+.played-card-mini .remove-btn:hover {
+    background: linear-gradient(180deg, #c62828 0%, #8e0000 100%);
+    border-color: #ef5350;
 }
 
 /* Hand Section */
@@ -329,80 +409,190 @@ body {
     flex-wrap: wrap;
 }
 
-/* Draggable Cards */
+/* Hearthstone-style Cards */
 .hand-card {
-    width: 70px;
-    height: 95px;
-    border-radius: 10px;
+    width: 80px;
+    height: 110px;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     cursor: grab;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255,255,255,0.1);
+    background: #2a2a3e;
+    border: 3px solid #8b7355;
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.1),
+        0 0 0 1px rgba(0,0,0,0.3);
+}
+
+/* Card frame - golden border effect */
+.hand-card::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 5px;
+    border: 2px solid rgba(212, 175, 55, 0.4);
+    pointer-events: none;
+}
+
+/* Card inner glow */
+.hand-card::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 40%);
+    pointer-events: none;
 }
 
 .hand-card:hover {
-    transform: translateY(-10px) scale(1.05);
+    transform: translateY(-15px) scale(1.08);
     z-index: 10;
+    box-shadow:
+        0 12px 25px rgba(0,0,0,0.5),
+        0 0 20px rgba(212, 175, 55, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .hand-card:active {
     cursor: grabbing;
 }
 
-.hand-card.discipline { background: linear-gradient(135deg, var(--discipline) 0%, #388E3C 100%); }
-.hand-card.flex { background: linear-gradient(135deg, var(--flex) 0%, #1976D2 100%); }
-.hand-card.joker { background: linear-gradient(135deg, var(--joker) 0%, #F57C00 100%); }
-.hand-card.fasting { background: linear-gradient(135deg, var(--fasting) 0%, #7B1FA2 100%); }
+/* Card type backgrounds */
+.hand-card.discipline {
+    background: linear-gradient(180deg, #1a3d1a 0%, #0d1f0d 100%);
+    border-color: #2d5a2d;
+}
+.hand-card.discipline::before { border-color: rgba(76, 175, 80, 0.5); }
+
+.hand-card.flex {
+    background: linear-gradient(180deg, #1a2d4d 0%, #0d1a2d 100%);
+    border-color: #2d4a6d;
+}
+.hand-card.flex::before { border-color: rgba(33, 150, 243, 0.5); }
+
+.hand-card.joker {
+    background: linear-gradient(180deg, #4d3319 0%, #2d1f0d 100%);
+    border-color: #6d4a1a;
+}
+.hand-card.joker::before { border-color: rgba(255, 152, 0, 0.5); }
+
+.hand-card.fasting {
+    background: linear-gradient(180deg, #3d1a4d 0%, #1f0d2d 100%);
+    border-color: #5a2d6d;
+}
+.hand-card.fasting::before { border-color: rgba(156, 39, 176, 0.5); }
 
 .hand-card.disabled {
     opacity: 0.4;
     cursor: not-allowed;
     transform: none !important;
+    filter: grayscale(0.5);
+}
+
+/* Card illustration area */
+.card-art {
+    width: 54px;
+    height: 40px;
+    margin-top: 10px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hand-card.discipline .card-art {
+    background: radial-gradient(ellipse at center, #4CAF50 0%, #2E7D32 70%, #1B5E20 100%);
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 8px rgba(76, 175, 80, 0.4);
+}
+.hand-card.flex .card-art {
+    background: radial-gradient(ellipse at center, #2196F3 0%, #1565C0 70%, #0D47A1 100%);
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 8px rgba(33, 150, 243, 0.4);
+}
+.hand-card.joker .card-art {
+    background: radial-gradient(ellipse at center, #FF9800 0%, #EF6C00 70%, #E65100 100%);
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 8px rgba(255, 152, 0, 0.4);
+}
+.hand-card.fasting .card-art {
+    background: radial-gradient(ellipse at center, #9C27B0 0%, #7B1FA2 70%, #4A148C 100%);
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.3), 0 0 8px rgba(156, 39, 176, 0.4);
 }
 
 .hand-card .card-emoji {
-    font-size: 1.8rem;
-    margin-bottom: 4px;
+    font-size: 1.6rem;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+    z-index: 1;
+}
+
+/* Card name banner */
+.card-banner {
+    width: 90%;
+    margin-top: 6px;
+    padding: 3px 6px;
+    background: linear-gradient(180deg, #4a4a5e 0%, #2a2a3e 100%);
+    border-radius: 3px;
+    border: 1px solid #5a5a6e;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .hand-card .card-name {
-    font-size: 0.65rem;
-    font-weight: 600;
+    font-size: 0.55rem;
+    font-weight: 700;
     text-align: center;
+    color: #e8e8e8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
+/* Gem counter badge */
 .hand-card .card-count {
     position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--bg-card);
-    color: var(--text);
-    width: 24px;
-    height: 24px;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border: 2px solid currentColor;
-    box-shadow: var(--shadow);
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    box-shadow:
+        0 2px 4px rgba(0,0,0,0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.3),
+        inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
-.hand-card.discipline .card-count { border-color: var(--discipline); }
-.hand-card.flex .card-count { border-color: var(--flex); }
-.hand-card.joker .card-count { border-color: var(--joker); }
+.hand-card.discipline .card-count {
+    background: radial-gradient(ellipse at 30% 30%, #81C784 0%, #4CAF50 50%, #2E7D32 100%);
+}
+.hand-card.flex .card-count {
+    background: radial-gradient(ellipse at 30% 30%, #64B5F6 0%, #2196F3 50%, #1565C0 100%);
+}
+.hand-card.joker .card-count {
+    background: radial-gradient(ellipse at 30% 30%, #FFB74D 0%, #FF9800 50%, #EF6C00 100%);
+}
+.hand-card.fasting .card-count {
+    background: radial-gradient(ellipse at 30% 30%, #BA68C8 0%, #9C27B0 50%, #7B1FA2 100%);
+}
 
 /* Dragging state */
 .hand-card.dragging {
-    opacity: 0.8;
-    transform: scale(1.1) rotate(5deg);
+    opacity: 0.9;
+    transform: scale(1.15) rotate(3deg);
     z-index: 100;
+    box-shadow:
+        0 20px 40px rgba(0,0,0,0.5),
+        0 0 30px rgba(212, 175, 55, 0.4);
 }
 
 /* Settings */
@@ -611,14 +801,29 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 380px) {
+@media (max-width: 400px) {
     .hand-card {
-        width: 60px;
-        height: 85px;
+        width: 68px;
+        height: 94px;
+    }
+
+    .card-art {
+        width: 46px;
+        height: 34px;
+        margin-top: 8px;
     }
 
     .hand-card .card-emoji {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+    }
+
+    .card-banner {
+        margin-top: 4px;
+        padding: 2px 4px;
+    }
+
+    .hand-card .card-name {
+        font-size: 0.5rem;
     }
 
     .meal-label {
