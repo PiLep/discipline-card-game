@@ -898,9 +898,14 @@ body {
         height: 140px;
     }
 
-    .cta-hint {
-        font-size: 0.9rem;
-        padding: 10px 16px;
+    .cta-hint,
+    .week-past-hint,
+    .week-future-hint {
+        display: none;
+    }
+
+    .hand-info {
+        display: none;
     }
 
     .played-card-mini .remove-btn {
