@@ -46,12 +46,12 @@ body {
 }
 
 .app {
-    max-width: 600px;
+    max-width: 100%;
     margin: 0 auto;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 320px;
+    padding-bottom: 180px;
 }
 
 /* Header */
@@ -173,18 +173,20 @@ body {
 /* Game Board */
 .game-board {
     flex: 1;
-    padding: 10px 15px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .selected-date-title {
-    font-size: 1rem;
+    font-size: 1.2rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     display: flex;
     align-items: center;
     gap: 10px;
+    text-align: center;
 }
 
 .selected-date-title .today-badge {
@@ -198,26 +200,29 @@ body {
 /* Meal Slots */
 .meal-slots {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex: 1;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .meal-drop-zone {
     background: var(--bg-card);
     border-radius: var(--border-radius);
-    padding: 12px 15px;
+    padding: 15px;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     transition: all 0.2s;
-    border: 2px dashed transparent;
-    flex: 1;
+    border: 3px dashed transparent;
     box-shadow: var(--shadow);
+    min-width: 300px;
+    min-height: 450px;
 }
 
 .meal-drop-zone.main-meal {
-    flex: 2;
+    /* Same size for all meals now */
 }
 
 .meal-drop-zone.drag-over {
@@ -227,15 +232,16 @@ body {
 }
 
 .meal-label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    min-width: 100px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
 }
 
 .meal-card-slot {
     flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .meal-card-slot .empty-slot {
@@ -285,28 +291,31 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(245, 245, 245, 0.98) 0%, rgba(245, 245, 245, 0.9) 80%, transparent 100%);
-    padding: 10px 10px 20px;
+    background: linear-gradient(to top, var(--bg) 0%, var(--bg) 60%, transparent 100%);
+    padding: 0 20px 10px;
     z-index: 50;
-}
-
-.dark-mode .hand-section {
-    background: linear-gradient(to top, rgba(26, 26, 46, 0.98) 0%, rgba(26, 26, 46, 0.9) 80%, transparent 100%);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 .hand-info {
     text-align: center;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--text-muted);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .card-hand {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: -40px;
     padding: 0 10px;
-    flex-wrap: wrap;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-top: 250px;
+    margin-top: -250px;
 }
 
 /* Hearthstone-style Cards - Full card image (transparent PNG) */
@@ -325,11 +334,13 @@ body {
 
 .hand-card {
     cursor: grab;
+    margin: 0 -30px;
+    transform: translateY(250px);
 }
 
 .hand-card:hover {
-    transform: translateY(-15px) scale(1.08);
-    z-index: 10;
+    transform: translateY(50px) scale(1.05);
+    z-index: 100;
 }
 
 .hand-card:active {
@@ -377,8 +388,8 @@ body {
 /* Dragging state */
 .hand-card.dragging {
     opacity: 0.9;
-    transform: scale(1.15) rotate(3deg);
-    z-index: 100;
+    transform: translateY(0) scale(1.1) rotate(3deg);
+    z-index: 200;
 }
 
 /* Settings */
