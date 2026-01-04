@@ -68,27 +68,29 @@ body {
 /* Calendar Section */
 .calendar-section {
     background: var(--bg-card);
-    padding: 12px 15px;
-    margin: 0 10px 10px;
+    padding: 20px 30px;
+    margin: 0 auto 20px;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
+    max-width: 700px;
+    width: calc(100% - 40px);
 }
 
 .calendar-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .calendar-header .nav-btn {
     background: var(--bg-light);
     border: none;
     color: var(--text);
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -98,15 +100,15 @@ body {
 }
 
 .week-label {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: var(--text);
 }
 
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
+    gap: 10px;
 }
 
 .calendar-day {
@@ -116,11 +118,12 @@ body {
     align-items: center;
     justify-content: center;
     background: var(--bg-light);
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s;
-    border: 2px solid transparent;
-    padding: 4px;
+    border: 3px solid transparent;
+    padding: 8px;
+    min-height: 70px;
 }
 
 .calendar-day:hover {
@@ -142,25 +145,26 @@ body {
 }
 
 .calendar-day .day-name {
-    font-size: 0.55rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     text-transform: uppercase;
+    font-weight: 500;
 }
 
 .calendar-day .day-number {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 700;
 }
 
 .calendar-day .day-status {
     display: flex;
-    gap: 2px;
-    margin-top: 2px;
+    gap: 3px;
+    margin-top: 4px;
 }
 
 .calendar-day .status-dot {
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
 }
 
