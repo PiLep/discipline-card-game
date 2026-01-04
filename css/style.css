@@ -1,4 +1,4 @@
-/* Variables - Hearthstone Theme */
+/* Variables - Hearthstone Theme Light */
 :root {
     --discipline: #4CAF50;
     --discipline-light: #81C784;
@@ -9,28 +9,32 @@
     --fasting: #9C27B0;
     --fasting-light: #BA68C8;
 
-    /* Hearthstone palette */
-    --bg: #1a0f0a;
-    --bg-card: #2d1b0e;
-    --bg-light: #3d2815;
-    --text: #f4e4bc;
-    --text-muted: #a89070;
+    /* Hearthstone palette - Light mode */
+    --bg: #e8dcc8;
+    --bg-card: #f5efe3;
+    --bg-light: #ddd0b8;
+    --bg-darker: #c9bca8;
+    --text: #2d1b0e;
+    --text-muted: #6b5a45;
     --gold: #c9a227;
-    --gold-light: #f4d03f;
+    --gold-light: #d4a82a;
     --gold-dark: #8b6914;
-    --bronze: #5a4a1a;
+    --bronze: #8b7355;
     --border-radius: 8px;
-    --shadow: 0 4px 12px rgba(0,0,0,0.5);
+    --shadow: 0 4px 12px rgba(0,0,0,0.15);
     --border-gold: 3px solid var(--gold);
 }
 
-/* Dark Mode - same as default for Hearthstone */
+/* Dark Mode - Hearthstone tavern style */
 .dark-mode {
     --bg: #1a0f0a;
     --bg-card: #2d1b0e;
     --bg-light: #3d2815;
+    --bg-darker: #150b07;
     --text: #f4e4bc;
     --text-muted: #a89070;
+    --gold-light: #f4d03f;
+    --bronze: #5a4a1a;
     --shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
@@ -77,7 +81,7 @@ body {
 
 /* Calendar Section */
 .calendar-section {
-    background: linear-gradient(180deg, var(--bg-card) 0%, #1f1208 100%);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%);
     padding: 20px 30px;
     margin: 0 auto 20px;
     border-radius: var(--border-radius);
@@ -198,7 +202,7 @@ body {
 }
 
 .calendar-day.today {
-    background: linear-gradient(180deg, #3d2815 0%, #1a0f0a 100%);
+    background: linear-gradient(180deg, #3d2815 0%, var(--bg) 100%);
     border-color: var(--gold-dark);
 }
 
@@ -277,7 +281,7 @@ body {
 }
 
 .meal-drop-zone {
-    background: linear-gradient(180deg, var(--bg-card) 0%, #1a0f08 100%);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%);
     border-radius: var(--border-radius);
     padding: 20px;
     display: flex;
@@ -375,7 +379,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, #1a0f0a 0%, #1a0f0a 50%, transparent 100%);
+    background: linear-gradient(to top, var(--bg) 0%, var(--bg) 50%, transparent 100%);
     padding: 0 20px 10px;
     z-index: 50;
     height: 200px;
@@ -395,7 +399,7 @@ body {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--gold-light);
-    background: linear-gradient(180deg, var(--bg-card) 0%, #1a0f08 100%);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%);
     padding: 12px 24px;
     border-radius: 6px;
     border: 2px solid var(--gold-dark);
@@ -548,7 +552,7 @@ body {
 }
 
 .settings-content {
-    background: linear-gradient(180deg, var(--bg-card) 0%, #1a0f08 100%);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%);
     border-radius: var(--border-radius);
     padding: 30px;
     width: 100%;
@@ -755,7 +759,7 @@ body {
     bottom: 220px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(180deg, var(--bg-card) 0%, #1a0f08 100%);
+    background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%);
     padding: 14px 28px;
     border-radius: 8px;
     font-size: 1rem;
