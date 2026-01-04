@@ -97,6 +97,81 @@
 
         <!-- Toast notifications -->
         <div class="toast" id="toast"></div>
+
+        <!-- Onboarding -->
+        <div class="onboarding" id="onboarding">
+            <div class="onboarding-content">
+                <!-- Step 1: Welcome -->
+                <div class="onboarding-step" data-step="1">
+                    <img src="images/logo.png" alt="Cartes sur table" class="onboarding-logo">
+                    <h2>Bienvenue !</h2>
+                    <p class="onboarding-text">
+                        <strong>Cartes sur table</strong> t'aide a planifier tes repas de la semaine avec un systeme de cartes.
+                    </p>
+                    <p class="onboarding-text">
+                        Chaque semaine, tu recois un deck de cartes a repartir sur tes repas selon ton objectif nutritionnel.
+                    </p>
+                    <button class="onboarding-btn" data-next="2">Continuer</button>
+                </div>
+
+                <!-- Step 2: Cards explanation -->
+                <div class="onboarding-step" data-step="2" style="display: none;">
+                    <h2>Les cartes</h2>
+                    <div class="onboarding-cards">
+                        <div class="onboarding-card-info">
+                            <span class="card-dot discipline"></span>
+                            <div>
+                                <strong>Discipline</strong>
+                                <p>Repas sain, conforme a ton regime</p>
+                            </div>
+                        </div>
+                        <div class="onboarding-card-info">
+                            <span class="card-dot flex"></span>
+                            <div>
+                                <strong>Flex</strong>
+                                <p>Ecart controle, repas plaisir</p>
+                            </div>
+                        </div>
+                        <div class="onboarding-card-info">
+                            <span class="card-dot joker"></span>
+                            <div>
+                                <strong>Joker</strong>
+                                <p>Liberte totale, sans culpabilite</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="onboarding-btn" data-next="3">Continuer</button>
+                </div>
+
+                <!-- Step 3: Regime selection -->
+                <div class="onboarding-step" data-step="3" style="display: none;">
+                    <h2>Choisis ton mode</h2>
+                    <p class="onboarding-text">Selectionne le regime qui correspond a tes objectifs :</p>
+                    <div class="onboarding-regimes" id="onboarding-regimes"></div>
+                    <button class="onboarding-btn" data-next="4" id="onboarding-regime-btn" disabled>Continuer</button>
+                </div>
+
+                <!-- Step 4: How to play -->
+                <div class="onboarding-step" data-step="4" style="display: none;">
+                    <h2>Comment jouer</h2>
+                    <div class="onboarding-tuto">
+                        <div class="tuto-step">
+                            <span class="tuto-number">1</span>
+                            <p>Selectionne un jour dans le calendrier</p>
+                        </div>
+                        <div class="tuto-step">
+                            <span class="tuto-number">2</span>
+                            <p>Glisse une carte sur un repas (petit-dej, dejeuner, diner)</p>
+                        </div>
+                        <div class="tuto-step">
+                            <span class="tuto-number">3</span>
+                            <p>Gere ton deck pour tenir toute la semaine !</p>
+                        </div>
+                    </div>
+                    <button class="onboarding-btn onboarding-start" id="onboarding-finish">C'est parti !</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="js/cards-data.js"></script>

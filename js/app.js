@@ -18,6 +18,7 @@ class App {
         this.renderHand();
         this.renderMealSlots();
         this.updateUI();
+        this.initOnboarding();
     }
 
     getDayNames() {
@@ -528,6 +529,110 @@ class App {
         toast.classList.toggle('error', isError);
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Onboarding
+    initOnboarding() {
+        const onboardingComplete = localStorage.getItem('onboardingComplete');
+        const onboarding = document.getElementById('onboarding');
+
+        if (onboardingComplete) {
+            onboarding.style.display = 'none';
+            return;
+        }
+
+        // Render regime options
+        this.renderOnboardingRegimes();
+
+        // Bind onboarding events
+        this.bindOnboardingEvents();
+    }
+
+    renderOnboardingRegimes() {
+        const container = document.getElementById('onboarding-regimes');
+        container.innerHTML = '';
+
+        // Exclude 'custom' from onboarding
+        const regimes = Object.values(REGIME_MODES).filter(r => r.id !== 'custom');
+
+        regimes.forEach(regime => {
+            const el = document.createElement('div');
+            el.className = 'onboarding-regime';
+            el.dataset.regime = regime.id;
+            el.innerHTML = `
+                <span class="regime-radio"></span>
+                <div class="regime-info">
+                    <strong>${regime.name}</strong>
+                    <p>${regime.description}</p>
+                </div>
+            `;
+            el.addEventListener('click', () => this.selectOnboardingRegime(regime.id));
+            container.appendChild(el);
+        });
+    }
+
+    selectOnboardingRegime(regimeId) {
+        // Update UI
+        document.querySelectorAll('.onboarding-regime').forEach(el => {
+            el.classList.toggle('selected', el.dataset.regime === regimeId);
+        });
+
+        // Store selection
+        this.selectedOnboardingRegime = regimeId;
+
+        // Enable continue button
+        document.getElementById('onboarding-regime-btn').disabled = false;
+    }
+
+    bindOnboardingEvents() {
+        // Next step buttons
+        document.querySelectorAll('.onboarding-btn[data-next]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const nextStep = btn.dataset.next;
+                this.goToOnboardingStep(nextStep);
+            });
+        });
+
+        // Finish button
+        document.getElementById('onboarding-finish').addEventListener('click', () => {
+            this.completeOnboarding();
+        });
+    }
+
+    goToOnboardingStep(stepNumber) {
+        // Hide all steps
+        document.querySelectorAll('.onboarding-step').forEach(step => {
+            step.style.display = 'none';
+        });
+
+        // Show target step
+        const targetStep = document.querySelector(`.onboarding-step[data-step="${stepNumber}"]`);
+        if (targetStep) {
+            targetStep.style.display = 'block';
+            // Re-trigger animation
+            targetStep.style.animation = 'none';
+            targetStep.offsetHeight; // Trigger reflow
+            targetStep.style.animation = 'fadeInUp 0.4s ease-out';
+        }
+    }
+
+    completeOnboarding() {
+        // Apply selected regime
+        if (this.selectedOnboardingRegime) {
+            game.setRegimeMode(this.selectedOnboardingRegime);
+            this.renderRegimeSelector();
+            this.renderHand();
+        }
+
+        // Mark onboarding as complete
+        localStorage.setItem('onboardingComplete', 'true');
+
+        // Hide onboarding with animation
+        const onboarding = document.getElementById('onboarding');
+        onboarding.classList.add('hidden');
+        setTimeout(() => {
+            onboarding.style.display = 'none';
+        }, 300);
     }
 }
 
