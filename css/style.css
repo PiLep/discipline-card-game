@@ -402,9 +402,8 @@ body {
 }
 
 .hand-card.disabled {
-    opacity: 0.4;
     cursor: not-allowed;
-    filter: grayscale(0.5);
+    filter: grayscale(1);
 }
 
 .hand-card.disabled:hover {
