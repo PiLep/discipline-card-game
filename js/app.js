@@ -79,7 +79,17 @@ class App {
         const current = game.parseDate(this.displayedWeekMonday);
         current.setDate(current.getDate() + (direction * 7));
         this.displayedWeekMonday = game.formatDate(current);
+
+        // Sélectionner le premier jour de la nouvelle semaine ou aujourd'hui si c'est la semaine courante
+        const todayMonday = game.getMondayOfWeek();
+        if (this.displayedWeekMonday === todayMonday) {
+            this.selectedDate = game.getTodayString();
+        } else {
+            this.selectedDate = this.displayedWeekMonday;
+        }
+
         this.renderCalendar();
+        this.updateUI();
     }
 
     /**
@@ -155,7 +165,7 @@ class App {
      */
     renderRegimeSelector() {
         const container = document.getElementById('regime-selector');
-        const state = game.getState();
+        const state = game.getStateForWeek(this.displayedWeekMonday);
 
         container.innerHTML = '';
 
@@ -211,21 +221,30 @@ class App {
      * Met à jour toute l'interface
      */
     updateUI() {
-        const state = game.getState();
         const today = game.getTodayString();
+        const todayMonday = game.getMondayOfWeek();
 
-        // Deck restant
-        document.getElementById('count-discipline').textContent = state.remainingCards.discipline;
-        document.getElementById('count-flex').textContent = state.remainingCards.flex;
-        document.getElementById('count-joker').textContent = state.remainingCards.joker;
+        // Obtenir l'état de la semaine affichée
+        const weekState = game.getStateForWeek(this.displayedWeekMonday);
+
+        // Deck de la semaine affichée
+        document.getElementById('count-discipline').textContent = weekState.remainingCards.discipline;
+        document.getElementById('count-flex').textContent = weekState.remainingCards.flex;
+        document.getElementById('count-joker').textContent = weekState.remainingCards.joker;
 
         // Classes pour deck vide
-        document.getElementById('deck-discipline').classList.toggle('empty', state.remainingCards.discipline === 0);
-        document.getElementById('deck-flex').classList.toggle('empty', state.remainingCards.flex === 0);
-        document.getElementById('deck-joker').classList.toggle('empty', state.remainingCards.joker === 0);
+        document.getElementById('deck-discipline').classList.toggle('empty', weekState.remainingCards.discipline === 0);
+        document.getElementById('deck-flex').classList.toggle('empty', weekState.remainingCards.flex === 0);
+        document.getElementById('deck-joker').classList.toggle('empty', weekState.remainingCards.joker === 0);
 
-        // Info reset
-        document.getElementById('reset-info').textContent = `Reset dans ${state.daysUntilReset}j`;
+        // Info reset - afficher si c'est la semaine courante ou une autre
+        const resetInfo = document.getElementById('reset-info');
+        if (weekState.isCurrentWeek) {
+            const daysLeft = this.getDaysUntilNextMonday();
+            resetInfo.textContent = `Reset dans ${daysLeft}j`;
+        } else {
+            resetInfo.textContent = 'Semaine ' + (this.displayedWeekMonday < todayMonday ? 'passée' : 'future');
+        }
 
         // Titre de la date sélectionnée
         const titleEl = document.getElementById('selected-date-title');
@@ -243,6 +262,16 @@ class App {
         // Repas du jour sélectionné
         const meals = game.getDayMeals(this.selectedDate);
         this.renderMeals(meals);
+    }
+
+    /**
+     * Calcule les jours jusqu'au prochain lundi
+     */
+    getDaysUntilNextMonday() {
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        if (dayOfWeek === 1) return 7;
+        return dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
     }
 
     /**
@@ -286,29 +315,24 @@ class App {
      */
     openCardModal(mealType) {
         this.currentMeal = mealType;
-        const state = game.getState();
         const mealInfo = MEALS[mealType];
-        const isCurrentWeek = game.isInCurrentWeek(this.selectedDate);
+
+        // Obtenir le deck de la semaine du jour sélectionné
+        const selectedWeekMonday = game.getMondayForDate(this.selectedDate);
+        const weekState = game.getStateForWeek(selectedWeekMonday);
 
         // Nom du repas
         document.getElementById('modal-meal-name').textContent = `${mealInfo.emoji} ${mealInfo.name}`;
 
-        // Cartes restantes
-        document.getElementById('modal-discipline-count').textContent = state.remainingCards.discipline;
-        document.getElementById('modal-flex-count').textContent = state.remainingCards.flex;
-        document.getElementById('modal-joker-count').textContent = state.remainingCards.joker;
+        // Cartes restantes de la semaine du jour sélectionné
+        document.getElementById('modal-discipline-count').textContent = weekState.remainingCards.discipline;
+        document.getElementById('modal-flex-count').textContent = weekState.remainingCards.flex;
+        document.getElementById('modal-joker-count').textContent = weekState.remainingCards.joker;
 
-        // Désactiver les cartes épuisées (seulement pour la semaine courante)
-        if (isCurrentWeek) {
-            document.querySelector('.card-choice.discipline').disabled = state.remainingCards.discipline === 0;
-            document.querySelector('.card-choice.flex').disabled = state.remainingCards.flex === 0;
-            document.querySelector('.card-choice.joker').disabled = state.remainingCards.joker === 0;
-        } else {
-            // Pour les autres semaines, toutes les cartes sont disponibles
-            document.querySelector('.card-choice.discipline').disabled = false;
-            document.querySelector('.card-choice.flex').disabled = false;
-            document.querySelector('.card-choice.joker').disabled = false;
-        }
+        // Désactiver les cartes épuisées
+        document.querySelector('.card-choice.discipline').disabled = weekState.remainingCards.discipline === 0;
+        document.querySelector('.card-choice.flex').disabled = weekState.remainingCards.flex === 0;
+        document.querySelector('.card-choice.joker').disabled = weekState.remainingCards.joker === 0;
 
         // Afficher la modal
         document.getElementById('card-modal').classList.add('active');

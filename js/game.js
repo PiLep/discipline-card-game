@@ -2,10 +2,9 @@
  * Discipline Nutrition - Logique du jeu
  *
  * Règles:
- * - Le deck se réinitialise chaque lundi
+ * - Chaque semaine a son propre deck
  * - On place une carte (ou jeûne) par repas
- * - Les cartes dépensées sont retirées du deck
- * - Navigation dans le calendrier pour voir/modifier les jours
+ * - Les cartes dépensées sont retirées du deck de la semaine
  */
 
 class NutritionGame {
@@ -15,20 +14,14 @@ class NutritionGame {
             regimeMode: 'lowcarb',
             customDeck: null,
 
-            // État de la semaine courante
-            weekStart: null,
-            remainingCards: {
-                discipline: 0,
-                flex: 0,
-                joker: 0
-            },
+            // Données par semaine (clé = lundi YYYY-MM-DD)
+            weeks: {},
 
             // Données des jours (clé = date YYYY-MM-DD)
             days: {}
         };
 
         this.loadState();
-        this.checkNewWeek();
     }
 
     /**
@@ -69,11 +62,18 @@ class NutritionGame {
     getMondayOfWeek(date = new Date()) {
         const d = new Date(date);
         const day = d.getDay();
-        // Dimanche = 0, on recule de 6 jours. Sinon on recule de (day - 1) jours
         const diff = day === 0 ? -6 : 1 - day;
         d.setDate(d.getDate() + diff);
         d.setHours(0, 0, 0, 0);
         return this.formatDate(d);
+    }
+
+    /**
+     * Obtient le lundi pour une date string
+     */
+    getMondayForDate(dateStr) {
+        const date = this.parseDate(dateStr);
+        return this.getMondayOfWeek(date);
     }
 
     /**
@@ -92,30 +92,34 @@ class NutritionGame {
     }
 
     /**
-     * Vérifie si c'est une nouvelle semaine
+     * Obtient ou initialise le deck d'une semaine
      */
-    checkNewWeek() {
-        const currentMonday = this.getMondayOfWeek();
-
-        if (this.state.weekStart !== currentMonday) {
-            this.state.weekStart = currentMonday;
-            this.resetDeck();
-            this.saveState();
+    getWeekDeck(mondayStr) {
+        if (!this.state.weeks[mondayStr]) {
+            this.initWeek(mondayStr);
         }
+        return this.state.weeks[mondayStr].remainingCards;
     }
 
     /**
-     * Réinitialise le deck selon le mode
+     * Initialise une semaine avec son deck
      */
-    resetDeck() {
+    initWeek(mondayStr) {
         const mode = REGIME_MODES[this.state.regimeMode];
-        if (mode) {
-            if (this.state.regimeMode === 'custom' && this.state.customDeck) {
-                this.state.remainingCards = { ...this.state.customDeck };
-            } else {
-                this.state.remainingCards = { ...mode.deck };
-            }
+        let deck;
+
+        if (this.state.regimeMode === 'custom' && this.state.customDeck) {
+            deck = { ...this.state.customDeck };
+        } else if (mode) {
+            deck = { ...mode.deck };
+        } else {
+            deck = { discipline: 14, flex: 10, joker: 4 };
         }
+
+        this.state.weeks[mondayStr] = {
+            remainingCards: deck
+        };
+        this.saveState();
     }
 
     /**
@@ -131,19 +135,6 @@ class NutritionGame {
             };
         }
         return this.state.days[dateStr].meals;
-    }
-
-    /**
-     * Vérifie si une date est dans la semaine courante
-     */
-    isInCurrentWeek(dateStr) {
-        const monday = this.getMondayOfWeek();
-        const date = this.parseDate(dateStr);
-        const mondayDate = this.parseDate(monday);
-        const sundayDate = new Date(mondayDate);
-        sundayDate.setDate(sundayDate.getDate() + 6);
-
-        return date >= mondayDate && date <= sundayDate;
     }
 
     /**
@@ -179,27 +170,20 @@ class NutritionGame {
             return { success: true };
         }
 
-        // Vérifier si la date est dans la semaine courante (pour utiliser le deck)
-        if (!this.isInCurrentWeek(dateStr)) {
-            // Pour les autres semaines, on ne vérifie pas le deck
-            dayMeals[mealType] = {
-                type: cardType,
-                timestamp: Date.now()
-            };
-            this.saveState();
-            return { success: true };
-        }
+        // Obtenir le deck de la semaine correspondante
+        const mondayStr = this.getMondayForDate(dateStr);
+        const weekDeck = this.getWeekDeck(mondayStr);
 
         // Vérifier si on a encore des cartes de ce type
-        if (this.state.remainingCards[cardType] <= 0) {
+        if (weekDeck[cardType] <= 0) {
             return {
                 success: false,
-                message: `Plus de cartes ${CARD_TYPES[cardType].name} !`
+                message: `Plus de cartes ${CARD_TYPES[cardType].name} cette semaine !`
             };
         }
 
         // Jouer la carte
-        this.state.remainingCards[cardType]--;
+        weekDeck[cardType]--;
         dayMeals[mealType] = {
             type: cardType,
             timestamp: Date.now()
@@ -208,7 +192,7 @@ class NutritionGame {
 
         return {
             success: true,
-            remainingCards: this.state.remainingCards[cardType]
+            remainingCards: weekDeck[cardType]
         };
     }
 
@@ -225,9 +209,11 @@ class NutritionGame {
             return { success: false, message: 'Aucune carte à annuler' };
         }
 
-        // Remettre la carte dans le deck si dans la semaine courante
-        if (meal.type !== 'fasting' && this.isInCurrentWeek(dateStr)) {
-            this.state.remainingCards[meal.type]++;
+        // Remettre la carte dans le deck de la semaine (sauf jeûne)
+        if (meal.type !== 'fasting') {
+            const mondayStr = this.getMondayForDate(dateStr);
+            const weekDeck = this.getWeekDeck(mondayStr);
+            weekDeck[meal.type]++;
         }
 
         this.state.days[dateStr].meals[mealType] = null;
@@ -292,36 +278,44 @@ class NutritionGame {
     }
 
     /**
-     * Change le mode de régime
+     * Change le mode de régime (affecte les nouvelles semaines)
      */
     setRegimeMode(modeId, customDeck = null) {
         this.state.regimeMode = modeId;
         if (modeId === 'custom' && customDeck) {
             this.state.customDeck = customDeck;
         }
-        this.resetDeck();
         this.saveState();
     }
 
     /**
-     * Obtient l'état actuel
+     * Réinitialise le deck d'une semaine spécifique
      */
-    getState() {
-        return {
-            ...this.state,
-            currentMode: REGIME_MODES[this.state.regimeMode],
-            daysUntilReset: this.getDaysUntilMonday()
-        };
+    resetWeekDeck(mondayStr) {
+        delete this.state.weeks[mondayStr];
+        this.initWeek(mondayStr);
     }
 
     /**
-     * Jours restants jusqu'au prochain lundi
+     * Obtient l'état pour une semaine donnée
      */
-    getDaysUntilMonday() {
-        const today = new Date();
-        const dayOfWeek = today.getDay();
-        if (dayOfWeek === 1) return 7;
-        return dayOfWeek === 0 ? 1 : 8 - dayOfWeek;
+    getStateForWeek(mondayStr) {
+        const weekDeck = this.getWeekDeck(mondayStr);
+        const today = this.getTodayString();
+        const todayMonday = this.getMondayOfWeek();
+
+        // Calculer les jours restants jusqu'à la fin de cette semaine
+        const monday = this.parseDate(mondayStr);
+        const sunday = new Date(monday);
+        sunday.setDate(sunday.getDate() + 6);
+
+        return {
+            regimeMode: this.state.regimeMode,
+            currentMode: REGIME_MODES[this.state.regimeMode],
+            remainingCards: weekDeck,
+            isCurrentWeek: mondayStr === todayMonday,
+            weekStart: mondayStr
+        };
     }
 
     /**
