@@ -34,6 +34,9 @@ class App {
         document.getElementById('prev-week').addEventListener('click', () => this.navigateWeek(-1));
         document.getElementById('next-week').addEventListener('click', () => this.navigateWeek(1));
 
+        // Swipe navigation sur le calendrier
+        this.setupSwipeNavigation();
+
         // Settings
         document.getElementById('settings-toggle').addEventListener('click', () => {
             document.getElementById('settings-panel').classList.add('active');
@@ -68,6 +71,42 @@ class App {
     toggleDarkMode(enabled) {
         document.body.classList.toggle('dark-mode', enabled);
         localStorage.setItem('darkMode', enabled);
+    }
+
+    setupSwipeNavigation() {
+        const calendar = document.querySelector('.calendar-section');
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+
+        calendar.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        calendar.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            this.handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+        }, { passive: true });
+    }
+
+    handleSwipe(startX, startY, endX, endY) {
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+        const minSwipeDistance = 50;
+
+        // Vérifier que c'est un swipe horizontal (pas vertical)
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+            if (deltaX > 0) {
+                // Swipe vers la droite = semaine précédente
+                this.navigateWeek(-1);
+            } else {
+                // Swipe vers la gauche = semaine suivante
+                this.navigateWeek(1);
+            }
+        }
     }
 
     setupDropZones() {
