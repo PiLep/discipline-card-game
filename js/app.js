@@ -272,24 +272,68 @@ class App {
                 });
 
                 // Touch events for mobile
+                let touchGhost = null;
+                let touchStarted = false;
+
                 cardEl.addEventListener('touchstart', (e) => {
+                    if (card.count <= 0) return;
+
+                    touchStarted = true;
                     this.draggedCard = card.type;
                     cardEl.classList.add('dragging');
-                });
+
+                    // Créer un ghost qui suit le doigt
+                    touchGhost = cardEl.cloneNode(true);
+                    touchGhost.classList.add('touch-ghost');
+                    touchGhost.style.cssText = `
+                        position: fixed;
+                        pointer-events: none;
+                        z-index: 1000;
+                        width: ${cardEl.offsetWidth}px;
+                        height: ${cardEl.offsetHeight}px;
+                        opacity: 0.9;
+                        transform: scale(1.1) rotate(5deg);
+                        transition: none;
+                    `;
+                    document.body.appendChild(touchGhost);
+
+                    const touch = e.touches[0];
+                    touchGhost.style.left = (touch.clientX - cardEl.offsetWidth / 2) + 'px';
+                    touchGhost.style.top = (touch.clientY - cardEl.offsetHeight / 2) + 'px';
+                }, { passive: true });
 
                 cardEl.addEventListener('touchmove', (e) => {
+                    if (!touchStarted) return;
                     e.preventDefault();
-                    const touch = e.touches[0];
-                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
 
+                    const touch = e.touches[0];
+
+                    // Déplacer le ghost
+                    if (touchGhost) {
+                        touchGhost.style.left = (touch.clientX - cardEl.offsetWidth / 2) + 'px';
+                        touchGhost.style.top = (touch.clientY - cardEl.offsetHeight / 2) + 'px';
+                    }
+
+                    // Highlight drop zone sous le doigt
+                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
                     document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
                     if (element && element.closest('.meal-drop-zone')) {
                         element.closest('.meal-drop-zone').classList.add('drag-over');
                     }
-                });
+                }, { passive: false });
 
                 cardEl.addEventListener('touchend', (e) => {
+                    if (!touchStarted) return;
+                    touchStarted = false;
+
                     cardEl.classList.remove('dragging');
+
+                    // Supprimer le ghost
+                    if (touchGhost) {
+                        touchGhost.remove();
+                        touchGhost = null;
+                    }
+
                     const touch = e.changedTouches[0];
                     const element = document.elementFromPoint(touch.clientX, touch.clientY);
 
@@ -300,6 +344,17 @@ class App {
                         this.playCard(mealType, this.draggedCard);
                     }
                     this.draggedCard = null;
+                });
+
+                cardEl.addEventListener('touchcancel', () => {
+                    touchStarted = false;
+                    cardEl.classList.remove('dragging');
+                    if (touchGhost) {
+                        touchGhost.remove();
+                        touchGhost = null;
+                    }
+                    this.draggedCard = null;
+                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
                 });
 
                 // Click fallback

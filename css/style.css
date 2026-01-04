@@ -533,9 +533,18 @@ body {
 
 /* Dragging state */
 .hand-card.dragging {
-    opacity: 0.9;
-    transform: translateY(0) scale(1.1) rotate(3deg);
-    z-index: 200;
+    opacity: 0.4;
+    transform: translateY(200px) scale(0.95);
+    z-index: 10;
+}
+
+/* Touch ghost pour mobile drag */
+.touch-ghost {
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+}
+
+.touch-ghost .card-count {
+    display: none;
 }
 
 /* Settings */
