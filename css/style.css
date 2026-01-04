@@ -46,12 +46,12 @@ body {
 }
 
 .app {
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 280px;
+    padding-bottom: 320px;
 }
 
 /* Header */
@@ -247,20 +247,20 @@ body {
 /* Played card in slot - uses same base as hand-card */
 .played-card-mini .remove-btn {
     position: absolute;
-    top: -12px;
-    right: -12px;
+    top: -14px;
+    right: -14px;
     background: linear-gradient(180deg, #5a5a6e 0%, #3a3a4e 100%);
-    border: 2px solid #8b7355;
+    border: 3px solid #8b7355;
     color: #e8e8e8;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
     transition: all 0.2s;
     z-index: 5;
 }
@@ -311,20 +311,20 @@ body {
 /* Hearthstone-style Cards - Base styles for both hand and played cards */
 .hand-card,
 .played-card-mini {
-    width: 120px;
-    height: 168px;
-    border-radius: 10px;
+    width: 160px;
+    height: 224px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     background: #2a2a3e;
-    border: 4px solid #8b7355;
+    border: 5px solid #8b7355;
     box-shadow:
-        0 6px 12px rgba(0,0,0,0.4),
-        inset 0 1px 0 rgba(255,255,255,0.1),
-        0 0 0 1px rgba(0,0,0,0.3);
+        0 8px 16px rgba(0,0,0,0.5),
+        inset 0 2px 0 rgba(255,255,255,0.1),
+        0 0 0 2px rgba(0,0,0,0.3);
 }
 
 .hand-card {
@@ -408,10 +408,10 @@ body {
 
 /* Card illustration area */
 .card-art {
-    width: 88px;
-    height: 68px;
-    margin-top: 16px;
-    border-radius: 6px;
+    width: 120px;
+    height: 95px;
+    margin-top: 20px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -452,45 +452,45 @@ body {
 /* Card name banner */
 .card-banner {
     width: 90%;
-    margin-top: 12px;
-    padding: 6px 10px;
+    margin-top: 16px;
+    padding: 10px 14px;
     background: linear-gradient(180deg, #4a4a5e 0%, #2a2a3e 100%);
-    border-radius: 4px;
-    border: 1px solid #5a5a6e;
+    border-radius: 6px;
+    border: 2px solid #5a5a6e;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .card-name {
-    font-size: 0.75rem;
+    font-size: 1rem;
     font-weight: 700;
     text-align: center;
     color: #e8e8e8;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    letter-spacing: 1px;
+    text-shadow: 0 2px 3px rgba(0,0,0,0.5);
     display: block;
 }
 
 /* Gem counter badge */
 .card-count {
     position: absolute;
-    top: -10px;
+    top: -14px;
     left: 50%;
     transform: translateX(-50%);
-    width: 32px;
-    height: 32px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 0 2px 3px rgba(0,0,0,0.5);
     box-shadow:
-        0 3px 6px rgba(0,0,0,0.4),
-        inset 0 -2px 4px rgba(0,0,0,0.3),
-        inset 0 2px 4px rgba(255,255,255,0.3);
+        0 4px 8px rgba(0,0,0,0.5),
+        inset 0 -3px 6px rgba(0,0,0,0.3),
+        inset 0 3px 6px rgba(255,255,255,0.3);
     z-index: 5;
 }
 
@@ -727,32 +727,32 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (max-width: 560px) {
     .hand-card,
     .played-card-mini {
-        width: 100px;
-        height: 140px;
+        width: 130px;
+        height: 182px;
     }
 
     .card-art {
-        width: 72px;
-        height: 56px;
-        margin-top: 12px;
+        width: 96px;
+        height: 75px;
+        margin-top: 16px;
     }
 
     .card-banner {
-        margin-top: 8px;
-        padding: 4px 8px;
+        margin-top: 12px;
+        padding: 8px 10px;
     }
 
     .card-name {
-        font-size: 0.65rem;
+        font-size: 0.85rem;
     }
 
     .card-count {
-        width: 28px;
-        height: 28px;
-        font-size: 0.9rem;
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
     }
 
     .meal-label {
@@ -761,32 +761,32 @@ body {
     }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 420px) {
     .hand-card,
     .played-card-mini {
-        width: 85px;
-        height: 120px;
+        width: 110px;
+        height: 154px;
     }
 
     .card-art {
-        width: 60px;
-        height: 46px;
-        margin-top: 10px;
+        width: 80px;
+        height: 62px;
+        margin-top: 14px;
     }
 
     .card-banner {
-        margin-top: 6px;
-        padding: 3px 6px;
+        margin-top: 10px;
+        padding: 6px 8px;
     }
 
     .card-name {
-        font-size: 0.55rem;
+        font-size: 0.75rem;
     }
 
     .card-count {
-        width: 24px;
-        height: 24px;
-        font-size: 0.8rem;
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
     }
 }
 
