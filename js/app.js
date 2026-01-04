@@ -133,12 +133,23 @@ class App {
         const sunday = new Date(monday);
         sunday.setDate(sunday.getDate() + 6);
         const monthNames = this.getMonthNames();
+        const todayMonday = game.getMondayOfWeek();
 
         let weekLabel = monday.getMonth() === sunday.getMonth()
             ? `${monday.getDate()} - ${sunday.getDate()} ${monthNames[monday.getMonth()]}`
             : `${monday.getDate()} ${monthNames[monday.getMonth()].slice(0, 3)} - ${sunday.getDate()} ${monthNames[sunday.getMonth()].slice(0, 3)}`;
 
-        document.getElementById('week-label').textContent = weekLabel;
+        // Week status indicator
+        let weekStatus = '';
+        if (this.displayedWeekMonday === todayMonday) {
+            weekStatus = '<span class="week-status current">Semaine en cours</span>';
+        } else if (this.displayedWeekMonday < todayMonday) {
+            weekStatus = '<span class="week-status past">Semaine passée</span>';
+        } else {
+            weekStatus = '<span class="week-status future">Semaine future</span>';
+        }
+
+        document.getElementById('week-label').innerHTML = `${weekLabel} ${weekStatus}`;
 
         grid.innerHTML = '';
 
