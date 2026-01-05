@@ -254,7 +254,7 @@ class App {
             const yOffset = Math.abs(offset) * 12; // Cards on edges are lower
 
             // Different baseY for different screen sizes
-            const baseY = isMobile ? 20 : isTablet ? 60 : 100;
+            const baseY = isMobile ? 60 : isTablet ? 100 : 150;
 
             cardEl.style.setProperty('--card-rotation', `${rotation}deg`);
             cardEl.style.setProperty('--card-y', `${baseY + yOffset}px`);
