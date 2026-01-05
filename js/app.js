@@ -117,13 +117,17 @@ class App {
         const dropZones = document.querySelectorAll('.meal-drop-zone');
 
         dropZones.forEach(zone => {
+            // Desktop drag events
             zone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 zone.classList.add('drag-over');
             });
 
-            zone.addEventListener('dragleave', () => {
-                zone.classList.remove('drag-over');
+            zone.addEventListener('dragleave', (e) => {
+                // Only remove if actually leaving the zone (not entering a child)
+                if (!zone.contains(e.relatedTarget)) {
+                    zone.classList.remove('drag-over');
+                }
             });
 
             zone.addEventListener('drop', (e) => {
@@ -132,18 +136,7 @@ class App {
                 const mealType = zone.dataset.meal;
                 if (this.draggedCard) {
                     this.playCard(mealType, this.draggedCard);
-                }
-            });
-
-            // Touch support
-            zone.addEventListener('touchend', (e) => {
-                if (this.draggedCard) {
-                    const touch = e.changedTouches[0];
-                    const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
-                    if (dropZone && dropZone.closest('.meal-drop-zone')) {
-                        const mealType = dropZone.closest('.meal-drop-zone').dataset.meal;
-                        this.playCard(mealType, this.draggedCard);
-                    }
+                    this.draggedCard = null;
                 }
             });
         });
@@ -297,7 +290,8 @@ class App {
                 let touchStarted = false;
 
                 cardEl.addEventListener('touchstart', (e) => {
-                    if (card.count <= 0) return;
+                    // Skip if disabled (but allow fasting which has '∞')
+                    if (card.type !== 'fasting' && card.count <= 0) return;
 
                     touchStarted = true;
                     this.draggedCard = card.type;
