@@ -69,7 +69,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 180px;
+    padding-bottom: 140px;
 }
 
 /* Header */
@@ -388,7 +388,7 @@ body {
     background: linear-gradient(to top, var(--bg) 0%, var(--bg) 50%, transparent 100%);
     padding: 0 20px calc(10px + env(safe-area-inset-bottom));
     z-index: 50;
-    height: calc(250px + env(safe-area-inset-bottom));
+    height: calc(160px + env(safe-area-inset-bottom));
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -456,7 +456,7 @@ body {
 .hand-card {
     cursor: grab;
     margin: 0 -30px;
-    transform: translateY(100px);
+    transform: translateY(40px);
     transform-origin: bottom center;
 }
 
@@ -475,7 +475,7 @@ body {
 }
 
 .hand-card.disabled:hover {
-    transform: translateY(var(--card-y, 100px)) rotate(var(--card-rotation, 0deg)) !important;
+    transform: translateY(var(--card-y, 40px)) rotate(var(--card-rotation, 0deg)) !important;
     z-index: 1;
 }
 
@@ -513,7 +513,7 @@ body {
 /* Dragging state */
 .hand-card.dragging {
     opacity: 0.4;
-    transform: translateY(var(--card-y, 150px)) rotate(var(--card-rotation, 0deg)) scale(0.95) !important;
+    transform: translateY(var(--card-y, 40px)) rotate(var(--card-rotation, 0deg)) scale(0.95) !important;
     z-index: 10;
 }
 
@@ -824,7 +824,7 @@ body {
 /* Toast */
 .toast {
     position: fixed;
-    bottom: 220px;
+    bottom: 170px;
     left: 50%;
     transform: translateX(-50%);
     background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-darker) 100%);
@@ -1174,7 +1174,7 @@ body {
 /* Touch Feedback - Mobile */
 @media (hover: none) and (pointer: coarse) {
     .hand-card:active:not(.disabled) {
-        transform: translateY(150px) scale(0.95);
+        transform: translateY(40px) scale(0.95);
         transition: transform 0.1s ease-out;
     }
 
@@ -1244,16 +1244,16 @@ body {
     }
 
     .hand-card.disabled:hover {
-        transform: translateY(var(--card-y, 80px)) rotate(var(--card-rotation, 0deg)) !important;
+        transform: translateY(var(--card-y, 30px)) rotate(var(--card-rotation, 0deg)) !important;
     }
 
     .card-hand {
-        padding-top: 80px;
-        margin-top: -80px;
+        padding-top: 60px;
+        margin-top: -60px;
     }
 
     .hand-section {
-        height: 200px;
+        height: 130px;
     }
 
     .played-card-mini .remove-btn {
@@ -1357,16 +1357,16 @@ body {
     }
 
     .hand-card.disabled:hover {
-        transform: translateY(var(--card-y, 50px)) rotate(var(--card-rotation, 0deg)) !important;
+        transform: translateY(var(--card-y, 20px)) rotate(var(--card-rotation, 0deg)) !important;
     }
 
     .card-hand {
-        padding-top: 50px;
-        margin-top: -50px;
+        padding-top: 40px;
+        margin-top: -40px;
     }
 
     .hand-section {
-        height: 180px;
+        height: 110px;
     }
 
     .cta-hint,
@@ -1386,7 +1386,7 @@ body {
     }
 
     .app {
-        padding-bottom: 140px;
+        padding-bottom: 100px;
     }
 }
 
