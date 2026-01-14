@@ -1,0 +1,23 @@
+{
+    "name": "discipline-card-game",
+    "version": "1.0.0",
+    "description": "**Cartes sur table** est une application web (PWA) qui transforme la planification alimentaire en un jeu de cartes hebdomadaire. Inspirée par l'interface de Hearthstone, elle vous aide à équilibrer vos repas sans la lourdeur du comptage de calories.",
+    "main": "sw.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/PiLep/discipline-card-game.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/PiLep/discipline-card-game/issues"
+    },
+    "homepage": "https://github.com/PiLep/discipline-card-game#readme",
+    "devDependencies": {
+        "typescript": "^5.9.3"
+    }
+}
