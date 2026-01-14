@@ -1,240 +1,115 @@
 /**
  * Discipline Nutrition - Interface Hearthstone avec Drag & Drop
  */
+const $ = document.getElementById.bind(document);
+const $$ = document.querySelectorAll.bind(document);
 
 class App {
     constructor() {
         this.selectedDate = game.getTodayString();
         this.displayedWeekMonday = game.getMondayOfWeek();
         this.draggedCard = null;
-        
-        // Attendre que le jeu soit initialisé (IndexedDB) avant de rendre l'UI
-        game.ensureInitialized().then(() => {
-            this.init();
-        });
+        game.ensureInitialized().then(() => this.init());
     }
 
     init() {
         this.initTheme();
-        this.renderRegimeSelector();
         this.bindEvents();
+        this.renderAll();
+        this.initOnboarding();
+    }
+
+    renderAll() {
         this.renderCalendar();
         this.renderHand();
         this.renderMealSlots();
         this.updateUI();
-        this.initOnboarding();
-    }
-
-    getDayNames() {
-        return ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
-    }
-
-    getMonthNames() {
-        return ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        this.renderRegimeSelector();
     }
 
     bindEvents() {
-        // Navigation calendrier
-        document.getElementById('prev-week').addEventListener('click', () => this.navigateWeek(-1));
-        document.getElementById('next-week').addEventListener('click', () => this.navigateWeek(1));
-
-        // Swipe navigation sur le calendrier
+        $('prev-week').onclick = () => this.navigateWeek(-1);
+        $('next-week').onclick = () => this.navigateWeek(1);
+        $('settings-toggle').onclick = () => $('settings-panel').classList.add('active');
+        $('close-settings').onclick = () => $('settings-panel').classList.remove('active');
+        $('settings-panel').onclick = (e) => e.target.id === 'settings-panel' && $('settings-panel').classList.remove('active');
+        $('save-custom').onclick = () => this.saveCustomDeck();
+        $('dark-mode-toggle').onchange = (e) => this.toggleDarkMode(e.target.checked);
+        $('restart-tuto').onclick = () => this.restartTutorial();
         this.setupSwipeNavigation();
-
-        // Settings
-        document.getElementById('settings-toggle').addEventListener('click', () => {
-            document.getElementById('settings-panel').classList.add('active');
-        });
-        document.getElementById('close-settings').addEventListener('click', () => {
-            document.getElementById('settings-panel').classList.remove('active');
-        });
-        document.getElementById('settings-panel').addEventListener('click', (e) => {
-            if (e.target.id === 'settings-panel') {
-                document.getElementById('settings-panel').classList.remove('active');
-            }
-        });
-        document.getElementById('save-custom').addEventListener('click', () => this.saveCustomDeck());
-
-        // Dark mode toggle
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        darkModeToggle.addEventListener('change', () => this.toggleDarkMode(darkModeToggle.checked));
-
-        // Restart tutorial
-        document.getElementById('restart-tuto').addEventListener('click', () => this.restartTutorial());
-
-        // Setup drop zones
         this.setupDropZones();
     }
 
     initTheme() {
-        const savedTheme = localStorage.getItem('darkMode');
-        const isDarkMode = savedTheme === null ? true : savedTheme === 'true';
-        document.getElementById('dark-mode-toggle').checked = isDarkMode;
-        if (isDarkMode) {
-            document.body.classList.add('dark-mode');
-        }
+        const dark = localStorage.getItem('darkMode') !== 'false';
+        $('dark-mode-toggle').checked = dark;
+        document.body.classList.toggle('dark-mode', dark);
     }
 
-    toggleDarkMode(enabled) {
-        document.body.classList.toggle('dark-mode', enabled);
-        localStorage.setItem('darkMode', enabled);
+    toggleDarkMode(on) {
+        document.body.classList.toggle('dark-mode', on);
+        localStorage.setItem('darkMode', on);
     }
 
     setupSwipeNavigation() {
-        const calendar = document.querySelector('.calendar-section');
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchEndX = 0;
-        let touchEndY = 0;
-
-        calendar.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, { passive: true });
-
-        calendar.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-            this.handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
-        }, { passive: true });
-    }
-
-    handleSwipe(startX, startY, endX, endY) {
-        const deltaX = endX - startX;
-        const deltaY = endY - startY;
-        const minSwipeDistance = 50;
-
-        // Vérifier que c'est un swipe horizontal (pas vertical)
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
-            if (deltaX > 0) {
-                // Swipe vers la droite = semaine précédente
-                this.navigateWeek(-1);
-            } else {
-                // Swipe vers la gauche = semaine suivante
-                this.navigateWeek(1);
-            }
-        }
+        let startX, startY;
+        const cal = document.querySelector('.calendar-section');
+        cal.ontouchstart = e => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; };
+        cal.ontouchend = e => {
+            const dx = e.changedTouches[0].clientX - startX;
+            const dy = e.changedTouches[0].clientY - startY;
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) this.navigateWeek(dx > 0 ? -1 : 1);
+        };
     }
 
     setupDropZones() {
-        const dropZones = document.querySelectorAll('.meal-drop-zone');
-
-        dropZones.forEach(zone => {
-            // Desktop drag events
-            zone.addEventListener('dragover', (e) => {
+        $$('.meal-drop-zone').forEach(z => {
+            z.ondragover = e => { e.preventDefault(); z.classList.add('drag-over'); };
+            z.ondragleave = () => z.classList.remove('drag-over');
+            z.ondrop = e => {
                 e.preventDefault();
-                zone.classList.add('drag-over');
-            });
-
-            zone.addEventListener('dragleave', (e) => {
-                // Only remove if actually leaving the zone (not entering a child)
-                if (!zone.contains(e.relatedTarget)) {
-                    zone.classList.remove('drag-over');
-                }
-            });
-
-            zone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                zone.classList.remove('drag-over');
-                const mealType = zone.dataset.meal;
-                if (this.draggedCard) {
-                    this.playCard(mealType, this.draggedCard);
-                    this.draggedCard = null;
-                }
-            });
+                z.classList.remove('drag-over');
+                if (this.draggedCard) { this.playCard(z.dataset.meal, this.draggedCard); this.draggedCard = null; }
+            };
         });
     }
 
-    navigateWeek(direction) {
-        const current = game.parseDate(this.displayedWeekMonday);
-        current.setDate(current.getDate() + (direction * 7));
-        this.displayedWeekMonday = game.formatDate(current);
-
-        const todayMonday = game.getMondayOfWeek();
-        if (this.displayedWeekMonday === todayMonday) {
-            this.selectedDate = game.getTodayString();
-        } else {
-            this.selectedDate = this.displayedWeekMonday;
-        }
-
-        this.renderCalendar();
-        this.renderHand();
-        this.renderMealSlots();
-        this.updateUI();
+    navigateWeek(dir) {
+        const d = game.parseDate(this.displayedWeekMonday);
+        d.setDate(d.getDate() + dir * 7);
+        this.displayedWeekMonday = game.formatDate(d);
+        this.selectedDate = (this.displayedWeekMonday === game.getMondayOfWeek()) ? game.getTodayString() : this.displayedWeekMonday;
+        this.renderAll();
     }
 
     renderCalendar() {
-        const weekDays = game.getWeekDays(this.displayedWeekMonday);
-        const grid = document.getElementById('calendar-grid');
-        const dayNames = this.getDayNames();
-
-        // Week label
+        const days = game.getWeekDays(this.displayedWeekMonday);
+        const grid = $('calendar-grid');
         const monday = game.parseDate(this.displayedWeekMonday);
-        const sunday = new Date(monday);
-        sunday.setDate(sunday.getDate() + 6);
-        const monthNames = this.getMonthNames();
-        const todayMonday = game.getMondayOfWeek();
-
-        let weekLabel = monday.getMonth() === sunday.getMonth()
-            ? `${monday.getDate()} - ${sunday.getDate()} ${monthNames[monday.getMonth()]}`
-            : `${monday.getDate()} ${monthNames[monday.getMonth()].slice(0, 3)} - ${sunday.getDate()} ${monthNames[sunday.getMonth()].slice(0, 3)}`;
-
-        // Week status indicator
-        let weekStatus = '';
-        if (this.displayedWeekMonday === todayMonday) {
-            weekStatus = '<span class="week-status current">Semaine en cours</span>';
-        } else if (this.displayedWeekMonday < todayMonday) {
-            weekStatus = '<span class="week-status past">Semaine passée</span>';
-        } else {
-            weekStatus = '<span class="week-status future">Semaine future</span>';
-        }
-
-        document.getElementById('week-label').innerHTML = `${weekLabel} ${weekStatus}`;
+        const sunday = new Date(monday); sunday.setDate(sunday.getDate() + 6);
+        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+        
+        const status = this.displayedWeekMonday === game.getMondayOfWeek() ? 'current' : (this.displayedWeekMonday < game.getMondayOfWeek() ? 'past' : 'future');
+        const labels = { current: 'En cours', past: 'Terminée', future: 'À venir' };
+        
+        $('week-label').innerHTML = `${monday.getDate()} ${months[monday.getMonth()]} - ${sunday.getDate()} ${months[sunday.getMonth()]} ` +
+            `<span class="week-status ${status}">${labels[status]}</span>`;
 
         grid.innerHTML = '';
-
-        weekDays.forEach(day => {
-            const dayEl = document.createElement('div');
-            dayEl.className = 'calendar-day';
-            if (day.isToday) dayEl.classList.add('today');
-            if (day.date === this.selectedDate) dayEl.classList.add('selected');
-
-            let statusDots = '';
-            Object.values(day.meals).forEach(meal => {
-                statusDots += meal
-                    ? `<span class="status-dot ${meal.type}"></span>`
-                    : `<span class="status-dot empty"></span>`;
-            });
-
-            dayEl.innerHTML = `
-                <span class="day-name">${dayNames[day.dayOfWeek]}</span>
-                <span class="day-number">${day.dayNumber}</span>
-                <div class="day-status">${statusDots}</div>
-            `;
-
-            dayEl.addEventListener('click', () => this.selectDate(day.date));
-            grid.appendChild(dayEl);
+        days.forEach(d => {
+            const el = document.createElement('div');
+            el.className = `calendar-day ${d.isToday ? 'today' : ''} ${d.date === this.selectedDate ? 'selected' : ''}`;
+            el.innerHTML = `<span class="day-name">${['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'][d.dayOfWeek]}</span>` +
+                           `<span class="day-number">${d.dayNumber}</span>` +
+                           `<div class="day-status">${Object.values(d.meals).map(m => `<span class="status-dot ${m ? m.type : 'empty'}"></span>`).join('')}</div>`;
+            el.onclick = () => { this.selectedDate = d.date; this.renderAll(); };
+            grid.appendChild(el);
         });
     }
 
-    selectDate(dateStr) {
-        this.selectedDate = dateStr;
-        this.renderCalendar();
-        this.renderHand();
-        this.renderMealSlots();
-        this.updateUI();
-    }
-
     renderHand() {
-        const hand = document.getElementById('card-hand');
-        const mondayStr = game.getMondayForDate(this.selectedDate);
-        const weekState = game.getStateForWeek(mondayStr);
-        const deck = weekState.remainingCards;
-
-        hand.innerHTML = '';
-
-        // Cartes dans la main
+        const hand = $('card-hand');
+        const deck = game.getWeekDeck(game.getMondayOfWeek(game.parseDate(this.selectedDate)));
         const cards = [
             { type: 'discipline', ...CARD_TYPES.discipline, count: deck.discipline },
             { type: 'flex', ...CARD_TYPES.flex, count: deck.flex },
@@ -242,440 +117,177 @@ class App {
             { type: 'fasting', ...FASTING_OPTION, count: '∞' }
         ];
 
-        const totalCards = cards.length;
-        cards.forEach((card, index) => {
-            const cardEl = document.createElement('div');
-            cardEl.className = `hand-card ${card.type}`;
-            cardEl.draggable = true;
+        hand.innerHTML = '';
+        cards.forEach((c, i) => {
+            const el = document.createElement('div');
+            const off = i - (cards.length - 1) / 2;
+            const rot = off * 4;
+            const y = (window.innerWidth <= 480 ? 15 : 25) + Math.abs(off) * 8;
+            
+            el.className = `hand-card ${c.type} ${c.count === 0 && c.type !== 'fasting' ? 'disabled' : ''}`;
+            el.draggable = !el.classList.contains('disabled');
+            el.style.transform = `translateY(${y}px) rotate(${rot}deg)`;
+            el.innerHTML = `${c.type !== 'fasting' ? `<span class="card-count">${c.count}</span>` : ''}<img class="card-image" src="${c.image}" alt="${c.name}" draggable="false">`;
 
-            // Arc effect: rotation and vertical offset (responsive)
-            const isMobile = window.innerWidth <= 480;
-            const isTablet = window.innerWidth <= 768 && window.innerWidth > 480;
-
-            const centerIndex = (totalCards - 1) / 2;
-            const offset = index - centerIndex;
-            const rotation = offset * 4; // 4 degrees per card from center
-            const yOffset = Math.abs(offset) * 8; // Cards on edges are slightly lower
-
-            // Different baseY for different screen sizes (lower = more visible)
-            const baseY = isMobile ? 15 : isTablet ? 20 : 25;
-
-            cardEl.style.setProperty('--card-rotation', `${rotation}deg`);
-            cardEl.style.setProperty('--card-y', `${baseY + yOffset}px`);
-            cardEl.style.transform = `translateY(${baseY + yOffset}px) rotate(${rotation}deg)`;
-
-            const isDisabled = card.type !== 'fasting' && card.count === 0;
-            if (isDisabled) {
-                cardEl.classList.add('disabled');
-                cardEl.draggable = false;
+            if (el.draggable) {
+                el.ondragstart = e => { this.draggedCard = c.type; el.classList.add('dragging'); };
+                el.ondragend = () => { this.draggedCard = null; el.classList.remove('dragging'); $$('.meal-drop-zone').forEach(z => z.classList.remove('drag-over')); };
+                el.onclick = () => this.showCardOptions(c.type);
+                this.setupTouchEvents(el, c.type);
             }
-
-            cardEl.innerHTML = `
-                ${card.type !== 'fasting' ? `<span class="card-count">${card.count}</span>` : ''}
-                <img class="card-image" src="${card.image}" alt="${card.name}" draggable="false">
-            `;
-
-            if (!isDisabled) {
-                // Drag events
-                cardEl.addEventListener('dragstart', (e) => {
-                    this.draggedCard = card.type;
-                    cardEl.classList.add('dragging');
-                    e.dataTransfer.effectAllowed = 'move';
-                });
-
-                cardEl.addEventListener('dragend', () => {
-                    this.draggedCard = null;
-                    cardEl.classList.remove('dragging');
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
-                });
-
-                // Touch events for mobile
-                let touchGhost = null;
-                let touchStarted = false;
-
-                cardEl.addEventListener('touchstart', (e) => {
-                    // Skip if disabled (but allow fasting which has '∞')
-                    if (card.type !== 'fasting' && card.count <= 0) return;
-
-                    touchStarted = true;
-                    this.draggedCard = card.type;
-                    cardEl.classList.add('dragging');
-
-                    // Créer un ghost qui suit le doigt
-                    touchGhost = cardEl.cloneNode(true);
-                    touchGhost.classList.add('touch-ghost');
-                    touchGhost.style.cssText = `
-                        position: fixed;
-                        pointer-events: none;
-                        z-index: 1000;
-                        width: ${cardEl.offsetWidth}px;
-                        height: ${cardEl.offsetHeight}px;
-                        opacity: 0.9;
-                        transform: scale(1.1) rotate(5deg);
-                        transition: none;
-                    `;
-                    document.body.appendChild(touchGhost);
-
-                    const touch = e.touches[0];
-                    touchGhost.style.left = (touch.clientX - cardEl.offsetWidth / 2) + 'px';
-                    touchGhost.style.top = (touch.clientY - cardEl.offsetHeight / 2) + 'px';
-                }, { passive: true });
-
-                cardEl.addEventListener('touchmove', (e) => {
-                    if (!touchStarted) return;
-                    e.preventDefault();
-
-                    const touch = e.touches[0];
-
-                    // Déplacer le ghost
-                    if (touchGhost) {
-                        touchGhost.style.left = (touch.clientX - cardEl.offsetWidth / 2) + 'px';
-                        touchGhost.style.top = (touch.clientY - cardEl.offsetHeight / 2) + 'px';
-                    }
-
-                    // Highlight drop zone sous le doigt (par coordonnées, pas elementFromPoint)
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => {
-                        const rect = z.getBoundingClientRect();
-                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                            z.classList.add('drag-over');
-                        } else {
-                            z.classList.remove('drag-over');
-                        }
-                    });
-                }, { passive: false });
-
-                cardEl.addEventListener('touchend', (e) => {
-                    if (!touchStarted) return;
-                    touchStarted = false;
-
-                    cardEl.classList.remove('dragging');
-
-                    // Supprimer le ghost
-                    if (touchGhost) {
-                        touchGhost.remove();
-                        touchGhost = null;
-                    }
-
-                    const touch = e.changedTouches[0];
-
-                    // Trouver la drop zone par coordonnées
-                    let targetZone = null;
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => {
-                        const rect = z.getBoundingClientRect();
-                        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
-                            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                            targetZone = z;
-                        }
-                        z.classList.remove('drag-over');
-                    });
-
-                    if (targetZone) {
-                        const mealType = targetZone.dataset.meal;
-                        this.playCard(mealType, this.draggedCard);
-                    }
-                    this.draggedCard = null;
-                });
-
-                cardEl.addEventListener('touchcancel', () => {
-                    touchStarted = false;
-                    cardEl.classList.remove('dragging');
-                    if (touchGhost) {
-                        touchGhost.remove();
-                        touchGhost = null;
-                    }
-                    this.draggedCard = null;
-                    document.querySelectorAll('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
-                });
-
-                // Click fallback
-                cardEl.addEventListener('click', () => {
-                    this.showCardOptions(card.type);
-                });
-            }
-
-            hand.appendChild(cardEl);
+            hand.appendChild(el);
         });
-
-        // Info deck
-        const deckInfo = document.getElementById('deck-info');
-        const todayMonday = game.getMondayOfWeek();
-        if (mondayStr === todayMonday) {
-            deckInfo.innerHTML = `<span class="cta-hint">Glisse une carte sur un repas</span>`;
-        } else if (mondayStr < todayMonday) {
-            deckInfo.innerHTML = `<span class="week-past-hint">Semaine passée</span>`;
-        } else {
-            deckInfo.innerHTML = `<span class="week-future-hint">Semaine future</span>`;
-        }
+        
+        const m = game.getMondayOfWeek(game.parseDate(this.selectedDate));
+        const todayM = game.getMondayOfWeek();
+        $('deck-info').innerHTML = m === todayM ? 
+            '<span class="cta-hint">Glisse une carte</span>' : 
+            `<span class="week-hint week-${m < todayM ? 'past' : 'future'}">${m < todayM ? 'Semaine passée' : 'Semaine future'}</span>`;
     }
 
-    showCardOptions(cardType) {
-        // Si on clique sur une carte, montrer les repas disponibles
-        const meals = game.getDayMeals(this.selectedDate);
-        const availableMeals = Object.entries(meals)
-            .filter(([_, meal]) => meal === null)
-            .map(([type, _]) => type);
-
-        if (availableMeals.length === 0) {
-            this.showToast('Tous les repas sont déjà remplis', true);
-            return;
-        }
-
-        if (availableMeals.length === 1) {
-            this.playCard(availableMeals[0], cardType);
-        } else {
-            // Highlight les zones disponibles
-            document.querySelectorAll('.meal-drop-zone').forEach(zone => {
-                if (availableMeals.includes(zone.dataset.meal)) {
-                    zone.classList.add('drag-over');
-                    setTimeout(() => zone.classList.remove('drag-over'), 1000);
-                }
+    setupTouchEvents(el, type) {
+        let ghost, startPos;
+        el.ontouchstart = e => {
+            this.draggedCard = type; el.classList.add('dragging');
+            ghost = el.cloneNode(true);
+            ghost.className += ' touch-ghost';
+            Object.assign(ghost.style, { position: 'fixed', pointerEvents: 'none', zIndex: 1000, width: el.offsetWidth+'px', height: el.offsetHeight+'px', opacity: 0.9, transform: 'scale(1.1) rotate(5deg)' });
+            document.body.appendChild(ghost);
+            const t = e.touches[0]; ghost.style.left = (t.clientX - el.offsetWidth/2)+'px'; ghost.style.top = (t.clientY - el.offsetHeight/2)+'px';
+        };
+        el.ontouchmove = e => {
+            e.preventDefault();
+            const t = e.touches[0]; ghost.style.left = (t.clientX - el.offsetWidth/2)+'px'; ghost.style.top = (t.clientY - el.offsetHeight/2)+'px';
+            $$('.meal-drop-zone').forEach(z => {
+                const r = z.getBoundingClientRect();
+                z.classList.toggle('drag-over', t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom);
             });
-            this.showToast('Choisis un repas');
-        }
+        };
+        el.ontouchend = e => {
+            el.classList.remove('dragging'); ghost?.remove();
+            const t = e.changedTouches[0];
+            let zone = Array.from($$('.meal-drop-zone')).find(z => {
+                const r = z.getBoundingClientRect();
+                return t.clientX >= r.left && t.clientX <= r.right && t.clientY >= r.top && t.clientY <= r.bottom;
+            });
+            if (zone) this.playCard(zone.dataset.meal, type);
+            this.draggedCard = null;
+            $$('.meal-drop-zone').forEach(z => z.classList.remove('drag-over'));
+        };
+    }
+
+    showCardOptions(type) {
+        const meals = game.getDayMeals(this.selectedDate);
+        const free = Object.entries(meals).filter(([_, m]) => !m).map(([t]) => t);
+        if (!free.length) return this.showToast('Complet', true);
+        if (free.length === 1) return this.playCard(free[0], type);
+        $$('.meal-drop-zone').forEach(z => free.includes(z.dataset.meal) && (z.classList.add('drag-over'), setTimeout(() => z.classList.remove('drag-over'), 1000)));
+        this.showToast('Choisis un repas');
     }
 
     renderMealSlots() {
-        const meals = game.getDayMeals(this.selectedDate);
-
-        Object.entries(meals).forEach(([mealType, meal]) => {
-            const slot = document.getElementById(`slot-${mealType}`);
-
-            if (meal) {
-                const cardInfo = meal.type === 'fasting' ? FASTING_OPTION : CARD_TYPES[meal.type];
-                slot.innerHTML = `
-                    <div class="played-card-mini ${meal.type}">
-                        <img class="card-image" src="${cardInfo.image}" alt="${cardInfo.name}" draggable="false">
-                        <button class="remove-btn">&times;</button>
-                    </div>
-                `;
-
-                slot.querySelector('.remove-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.cancelCard(mealType);
-                });
-            } else {
-                slot.innerHTML = `<span class="empty-slot">Glisse une carte ici</span>`;
-            }
+        Object.entries(game.getDayMeals(this.selectedDate)).forEach(([type, m]) => {
+            const slot = $(`slot-${type}`);
+            if (m) {
+                const info = m.type === 'fasting' ? FASTING_OPTION : CARD_TYPES[m.type];
+                slot.innerHTML = `<div class="played-card-mini ${m.type}"><img class="card-image" src="${info.image}" alt="${info.name}" draggable="false"><button class="remove-btn">&times;</button></div>`;
+                slot.querySelector('.remove-btn').onclick = (e) => { e.stopPropagation(); this.cancelCard(type); };
+            } else slot.innerHTML = '<span class="empty-slot">Glisse ici</span>';
         });
     }
 
-    async playCard(mealType, cardType) {
-        const result = await game.playCard(this.selectedDate, mealType, cardType);
-
-        if (result.success) {
-            this.renderCalendar();
-            this.renderHand();
-            this.renderMealSlots();
-        } else {
-            this.showToast(result.message, true);
-        }
+    async playCard(mType, cType) {
+        const r = await game.playCard(this.selectedDate, mType, cType);
+        r.success ? this.renderAll() : this.showToast(r.message, true);
     }
 
-    async cancelCard(mealType) {
-        const result = await game.cancelCard(this.selectedDate, mealType);
-
-        if (result.success) {
-            this.renderCalendar();
-            this.renderHand();
-            this.renderMealSlots();
-            this.showToast('Carte annulée');
-        }
-    }
+    async cancelCard(mType) { if ((await game.cancelCard(this.selectedDate, mType)).success) { this.renderAll(); this.showToast('Annulé'); } }
 
     updateUI() {
-        const today = game.getTodayString();
-        const titleEl = document.getElementById('selected-date-title');
-        const selectedDate = game.parseDate(this.selectedDate);
-        const options = { weekday: 'long', day: 'numeric', month: 'long' };
-        let dateTitle = selectedDate.toLocaleDateString('fr-FR', options);
-        dateTitle = dateTitle.charAt(0).toUpperCase() + dateTitle.slice(1);
-
-        titleEl.innerHTML = this.selectedDate === today
-            ? `${dateTitle} <span class="today-badge">Aujourd'hui</span>`
-            : dateTitle;
+        const d = game.parseDate(this.selectedDate);
+        const title = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        $('selected-date-title').innerHTML = (this.selectedDate === game.getTodayString() ? title + ' <span class="today-badge">Aujourd\'hui</span>' : title);
     }
 
     renderRegimeSelector() {
-        const container = document.getElementById('regime-selector');
-        const weekState = game.getStateForWeek(this.displayedWeekMonday);
-
+        const container = $('regime-selector');
+        const mode = game.getStateForWeek(this.displayedWeekMonday).regimeMode;
         container.innerHTML = '';
-
-        Object.values(REGIME_MODES).forEach(mode => {
+        Object.values(REGIME_MODES).forEach(m => {
             const btn = document.createElement('button');
-            btn.className = `regime-btn ${weekState.regimeMode === mode.id ? 'active' : ''}`;
-            btn.textContent = mode.name;
-            btn.addEventListener('click', (e) => this.selectRegime(mode.id, e));
+            btn.className = `regime-btn ${mode === m.id ? 'active' : ''}`;
+            btn.textContent = m.name;
+            btn.onclick = () => {
+                if (m.id === 'custom') $('custom-deck').style.display = 'block';
+                else { game.setRegimeMode(m.id); $('custom-deck').style.display = 'none'; }
+                $$('.regime-btn').forEach(b => b.classList.toggle('active', b === btn));
+                this.renderHand();
+            };
             container.appendChild(btn);
         });
-
-        const customDeck = document.getElementById('custom-deck');
-        customDeck.style.display = weekState.regimeMode === 'custom' ? 'block' : 'none';
-    }
-
-    async selectRegime(modeId, event) {
-        if (modeId === 'custom') {
-            document.getElementById('custom-deck').style.display = 'block';
-        } else {
-            await game.setRegimeMode(modeId);
-            document.getElementById('custom-deck').style.display = 'none';
-        }
-
-        document.querySelectorAll('.regime-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-
-        this.renderHand();
+        $('custom-deck').style.display = mode === 'custom' ? 'block' : 'none';
     }
 
     async saveCustomDeck() {
-        const customDeck = {
-            discipline: parseInt(document.getElementById('custom-discipline').value) || 0,
-            flex: parseInt(document.getElementById('custom-flex').value) || 0,
-            joker: parseInt(document.getElementById('custom-joker').value) || 0
-        };
-
-        await game.setRegimeMode('custom', customDeck);
+        const deck = { discipline: parseInt($('custom-discipline').value) || 0, flex: parseInt($('custom-flex').value) || 0, joker: parseInt($('custom-joker').value) || 0 };
+        await game.setRegimeMode('custom', deck);
         this.renderHand();
-        this.showToast('Deck personnalisé appliqué !');
-        document.getElementById('settings-panel').classList.remove('active');
+        this.showToast('Appliqué !');
+        $('settings-panel').classList.remove('active');
     }
 
-    showToast(message, isError = false) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.classList.toggle('error', isError);
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
+    showToast(msg, err = false) {
+        const t = $('toast'); t.textContent = msg; t.classList.toggle('error', err); t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    // Onboarding
     initOnboarding() {
-        const onboardingComplete = localStorage.getItem('onboardingComplete');
-        const onboarding = document.getElementById('onboarding');
-
-        // Always render and bind (needed for restart tutorial)
         this.renderOnboardingRegimes();
-        this.bindOnboardingEvents();
-
-        // Hide if already completed
-        if (onboardingComplete) {
-            onboarding.style.display = 'none';
-        }
+        $$('.onboarding-btn[data-next]').forEach(btn => btn.onclick = () => this.goToOnboardingStep(btn.dataset.next));
+        $('onboarding-finish').onclick = () => this.completeOnboarding();
+        if (localStorage.getItem('onboardingComplete')) $('onboarding').style.display = 'none';
     }
 
     renderOnboardingRegimes() {
-        const container = document.getElementById('onboarding-regimes');
+        const container = $('onboarding-regimes');
         container.innerHTML = '';
-
-        // Exclude 'custom' from onboarding
-        const regimes = Object.values(REGIME_MODES).filter(r => r.id !== 'custom');
-
-        regimes.forEach(regime => {
+        Object.values(REGIME_MODES).filter(r => r.id !== 'custom').forEach(r => {
             const el = document.createElement('div');
             el.className = 'onboarding-regime';
-            el.dataset.regime = regime.id;
-            el.innerHTML = `
-                <span class="regime-radio"></span>
-                <div class="regime-info">
-                    <strong>${regime.name}</strong>
-                    <p>${regime.description}</p>
-                    <span class="regime-hint">${regime.hint}</span>
-                </div>
-            `;
-            el.addEventListener('click', () => this.selectOnboardingRegime(regime.id));
+            el.innerHTML = `<span class="regime-radio"></span><div class="regime-info"><strong>${r.name}</strong><p>${r.description}</p></div>`;
+            el.onclick = () => {
+                this.selRegime = r.id;
+                $$('.onboarding-regime').forEach(e => e.classList.toggle('selected', e === el));
+                $('onboarding-regime-btn').disabled = false;
+            };
             container.appendChild(el);
         });
     }
 
-    selectOnboardingRegime(regimeId) {
-        // Update UI
-        document.querySelectorAll('.onboarding-regime').forEach(el => {
-            el.classList.toggle('selected', el.dataset.regime === regimeId);
+    goToOnboardingStep(s) {
+        $$('.onboarding-step').forEach(step => {
+            step.style.display = (step.dataset.step === s ? 'block' : 'none');
+            if (step.dataset.step === s) { step.style.animation = 'none'; step.offsetHeight; step.style.animation = 'fadeInUp 0.4s ease-out'; }
         });
-
-        // Store selection
-        this.selectedOnboardingRegime = regimeId;
-
-        // Enable continue button
-        document.getElementById('onboarding-regime-btn').disabled = false;
-    }
-
-    bindOnboardingEvents() {
-        // Next step buttons
-        document.querySelectorAll('.onboarding-btn[data-next]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const nextStep = btn.dataset.next;
-                this.goToOnboardingStep(nextStep);
-            });
-        });
-
-        // Finish button
-        document.getElementById('onboarding-finish').addEventListener('click', () => {
-            this.completeOnboarding();
-        });
-    }
-
-    goToOnboardingStep(stepNumber) {
-        // Hide all steps
-        document.querySelectorAll('.onboarding-step').forEach(step => {
-            step.style.display = 'none';
-        });
-
-        // Show target step
-        const targetStep = document.querySelector(`.onboarding-step[data-step="${stepNumber}"]`);
-        if (targetStep) {
-            targetStep.style.display = 'block';
-            // Re-trigger animation
-            targetStep.style.animation = 'none';
-            targetStep.offsetHeight; // Trigger reflow
-            targetStep.style.animation = 'fadeInUp 0.4s ease-out';
-        }
     }
 
     async completeOnboarding() {
-        // Apply selected regime
-        if (this.selectedOnboardingRegime) {
-            await game.setRegimeMode(this.selectedOnboardingRegime);
-            this.renderRegimeSelector();
-            this.renderHand();
-        }
-
-        // Mark onboarding as complete
+        if (this.selRegime) await game.setRegimeMode(this.selRegime);
         localStorage.setItem('onboardingComplete', 'true');
-
-        // Hide onboarding with animation
-        const onboarding = document.getElementById('onboarding');
-        onboarding.classList.add('hidden');
-        setTimeout(() => {
-            onboarding.style.display = 'none';
-        }, 300);
+        $('onboarding').classList.add('hidden');
+        setTimeout(() => $('onboarding').style.display = 'none', 300);
+        this.renderAll();
     }
 
     restartTutorial() {
-        // Close settings panel
-        document.getElementById('settings-panel').classList.remove('active');
-
-        // Reset onboarding state
-        this.selectedOnboardingRegime = null;
-
-        // Reset UI
-        document.querySelectorAll('.onboarding-regime').forEach(el => {
-            el.classList.remove('selected');
-        });
-        document.getElementById('onboarding-regime-btn').disabled = true;
-
-        // Go to step 1
-        this.goToOnboardingStep(1);
-
-        // Show onboarding
-        const onboarding = document.getElementById('onboarding');
-        onboarding.style.display = 'flex';
-        onboarding.classList.remove('hidden');
+        $('settings-panel').classList.remove('active');
+        this.selRegime = null;
+        $$('.onboarding-regime').forEach(el => el.classList.remove('selected'));
+        $('onboarding-regime-btn').disabled = true;
+        this.goToOnboardingStep('1');
+        $('onboarding').style.display = 'flex';
+        $('onboarding').classList.remove('hidden');
     }
 }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new App();
-});
+document.addEventListener('DOMContentLoaded', () => window.app = new App());

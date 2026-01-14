@@ -117,22 +117,32 @@ body {
 }
 
 .calendar-header .nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg-card) 100%);
     border: 2px solid var(--gold-dark);
     color: var(--gold-light);
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    font-size: 1.3rem;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    padding: 0;
 }
 
 .calendar-header .nav-btn:hover {
     background: linear-gradient(180deg, var(--gold-dark) 0%, var(--bronze) 100%);
-    border-color: var(--gold);
-    color: var(--text);
+    border-color: var(--gold-light);
+    color: white;
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+}
+
+.calendar-header .nav-btn:active {
+    transform: translateY(1px) scale(0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 .week-label {
@@ -173,6 +183,27 @@ body {
     background: linear-gradient(180deg, #3a7bd5 0%, #2a5a9e 100%);
     border-color: #5a9be5;
     color: white;
+}
+
+.week-hint {
+    display: inline-block;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg-card) 100%);
+    border-radius: 20px;
+    border: 1px solid var(--bronze);
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.week-hint.week-past {
+    border-color: #6a6a6a;
+    background: rgba(100, 100, 100, 0.1);
+}
+
+.week-hint.week-future {
+    border-color: var(--flex);
+    background: rgba(33, 150, 243, 0.05);
 }
 
 .calendar-grid {
@@ -456,15 +487,6 @@ body {
     }
 }
 
-.week-past-hint,
-.week-future-hint {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    padding: 8px 16px;
-    background: linear-gradient(180deg, var(--bg-light) 0%, var(--bg-card) 100%);
-    border-radius: 6px;
-    border: 1px solid var(--bronze);
-}
 
 .card-hand {
     display: flex;
@@ -1470,8 +1492,7 @@ body {
     }
 
     .cta-hint,
-    .week-past-hint,
-    .week-future-hint {
+    .week-hint {
         display: none;
     }
 
@@ -1485,9 +1506,6 @@ body {
         font-size: 1.6rem;
     }
 
-    .app {
-        /* padding-bottom: 20px; */
-    }
 }
 
 /* Touch feedback */
