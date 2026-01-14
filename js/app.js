@@ -7,7 +7,11 @@ class App {
         this.selectedDate = game.getTodayString();
         this.displayedWeekMonday = game.getMondayOfWeek();
         this.draggedCard = null;
-        this.init();
+        
+        // Attendre que le jeu soit initialisé (IndexedDB) avant de rendre l'UI
+        game.ensureInitialized().then(() => {
+            this.init();
+        });
     }
 
     init() {
@@ -456,8 +460,8 @@ class App {
         });
     }
 
-    playCard(mealType, cardType) {
-        const result = game.playCard(this.selectedDate, mealType, cardType);
+    async playCard(mealType, cardType) {
+        const result = await game.playCard(this.selectedDate, mealType, cardType);
 
         if (result.success) {
             this.renderCalendar();
@@ -468,8 +472,8 @@ class App {
         }
     }
 
-    cancelCard(mealType) {
-        const result = game.cancelCard(this.selectedDate, mealType);
+    async cancelCard(mealType) {
+        const result = await game.cancelCard(this.selectedDate, mealType);
 
         if (result.success) {
             this.renderCalendar();
@@ -510,11 +514,11 @@ class App {
         customDeck.style.display = weekState.regimeMode === 'custom' ? 'block' : 'none';
     }
 
-    selectRegime(modeId, event) {
+    async selectRegime(modeId, event) {
         if (modeId === 'custom') {
             document.getElementById('custom-deck').style.display = 'block';
         } else {
-            game.setRegimeMode(modeId);
+            await game.setRegimeMode(modeId);
             document.getElementById('custom-deck').style.display = 'none';
         }
 
@@ -524,14 +528,14 @@ class App {
         this.renderHand();
     }
 
-    saveCustomDeck() {
+    async saveCustomDeck() {
         const customDeck = {
             discipline: parseInt(document.getElementById('custom-discipline').value) || 0,
             flex: parseInt(document.getElementById('custom-flex').value) || 0,
             joker: parseInt(document.getElementById('custom-joker').value) || 0
         };
 
-        game.setRegimeMode('custom', customDeck);
+        await game.setRegimeMode('custom', customDeck);
         this.renderHand();
         this.showToast('Deck personnalisé appliqué !');
         document.getElementById('settings-panel').classList.remove('active');
@@ -629,10 +633,10 @@ class App {
         }
     }
 
-    completeOnboarding() {
+    async completeOnboarding() {
         // Apply selected regime
         if (this.selectedOnboardingRegime) {
-            game.setRegimeMode(this.selectedOnboardingRegime);
+            await game.setRegimeMode(this.selectedOnboardingRegime);
             this.renderRegimeSelector();
             this.renderHand();
         }

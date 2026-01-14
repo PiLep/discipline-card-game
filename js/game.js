@@ -21,29 +21,40 @@ class NutritionGame {
             days: {}
         };
 
-        this.loadState();
+        this.initialized = false;
+        this.initPromise = this.init();
     }
 
     /**
-     * Charge l'état depuis localStorage
+     * Initialise le jeu et charge l'état
      */
-    loadState() {
-        const saved = localStorage.getItem('disciplineNutritionState');
+    async init() {
+        // Tenter la migration si nécessaire
+        await window.storage.migrateFromLocalStorage('disciplineNutritionState');
+        
+        // Charger l'état depuis le nouveau stockage (IndexedDB ou localStorage fallback)
+        const saved = await window.storage.get('disciplineNutritionState');
         if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                this.state = { ...this.state, ...parsed };
-            } catch (e) {
-                console.error('Erreur chargement:', e);
-            }
+            this.state = { ...this.state, ...saved };
+        }
+        this.initialized = true;
+        return this.state;
+    }
+
+    /**
+     * S'assure que l'état est chargé avant d'agir
+     */
+    async ensureInitialized() {
+        if (!this.initialized) {
+            await this.initPromise;
         }
     }
 
     /**
      * Sauvegarde l'état
      */
-    saveState() {
-        localStorage.setItem('disciplineNutritionState', JSON.stringify(this.state));
+    async saveState() {
+        await window.storage.set('disciplineNutritionState', this.state);
     }
 
     /**
@@ -104,7 +115,7 @@ class NutritionGame {
     /**
      * Initialise une semaine avec son deck
      */
-    initWeek(mondayStr) {
+    async initWeek(mondayStr) {
         const mode = REGIME_MODES[this.state.regimeMode];
         let deck;
 
@@ -119,7 +130,7 @@ class NutritionGame {
         this.state.weeks[mondayStr] = {
             remainingCards: deck
         };
-        this.saveState();
+        await this.saveState();
     }
 
     /**
@@ -139,7 +150,9 @@ class NutritionGame {
     /**
      * Joue une carte pour un repas à une date donnée
      */
-    playCard(dateStr, mealType, cardType) {
+    async playCard(dateStr, mealType, cardType) {
+        await this.ensureInitialized();
+
         // Initialiser le jour si nécessaire
         if (!this.state.days[dateStr]) {
             this.state.days[dateStr] = {
@@ -164,7 +177,7 @@ class NutritionGame {
                 type: 'fasting',
                 timestamp: Date.now()
             };
-            this.saveState();
+            await this.saveState();
             return { success: true };
         }
 
@@ -186,7 +199,7 @@ class NutritionGame {
             type: cardType,
             timestamp: Date.now()
         };
-        this.saveState();
+        await this.saveState();
 
         return {
             success: true,
@@ -197,7 +210,9 @@ class NutritionGame {
     /**
      * Annule une carte jouée
      */
-    cancelCard(dateStr, mealType) {
+    async cancelCard(dateStr, mealType) {
+        await this.ensureInitialized();
+
         if (!this.state.days[dateStr]) {
             return { success: false, message: 'Aucune carte à annuler' };
         }
@@ -215,7 +230,7 @@ class NutritionGame {
         }
 
         this.state.days[dateStr].meals[mealType] = null;
-        this.saveState();
+        await this.saveState();
 
         return { success: true };
     }
@@ -278,20 +293,22 @@ class NutritionGame {
     /**
      * Change le mode de régime (affecte les nouvelles semaines)
      */
-    setRegimeMode(modeId, customDeck = null) {
+    async setRegimeMode(modeId, customDeck = null) {
+        await this.ensureInitialized();
         this.state.regimeMode = modeId;
         if (modeId === 'custom' && customDeck) {
             this.state.customDeck = customDeck;
         }
-        this.saveState();
+        await this.saveState();
     }
 
     /**
      * Réinitialise le deck d'une semaine spécifique
      */
-    resetWeekDeck(mondayStr) {
+    async resetWeekDeck(mondayStr) {
+        await this.ensureInitialized();
         delete this.state.weeks[mondayStr];
-        this.initWeek(mondayStr);
+        await this.initWeek(mondayStr);
     }
 
     /**
@@ -299,13 +316,7 @@ class NutritionGame {
      */
     getStateForWeek(mondayStr) {
         const weekDeck = this.getWeekDeck(mondayStr);
-        const today = this.getTodayString();
         const todayMonday = this.getMondayOfWeek();
-
-        // Calculer les jours restants jusqu'à la fin de cette semaine
-        const monday = this.parseDate(mondayStr);
-        const sunday = new Date(monday);
-        sunday.setDate(sunday.getDate() + 6);
 
         return {
             regimeMode: this.state.regimeMode,
@@ -319,8 +330,11 @@ class NutritionGame {
     /**
      * Réinitialise tout
      */
-    reset() {
+    async reset() {
+        await window.storage.delete('disciplineNutritionState');
         localStorage.removeItem('disciplineNutritionState');
+        localStorage.removeItem('darkMode');
+        localStorage.removeItem('onboardingComplete');
         location.reload();
     }
 }
